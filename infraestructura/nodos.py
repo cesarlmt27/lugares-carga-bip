@@ -5,7 +5,7 @@ from geoalchemy2 import Geometry, WKTElement
 
 def procesar_archivos(directorio):
     # Configurar la conexión a la base de datos PostGIS
-    engine = create_engine('postgresql+psycopg://postgres:kj2aBv6f33cZ@localhost:5432/postgres')
+    engine = create_engine('postgresql+psycopg://postgres:kj2aBv6f33cZ@postgis:5432/postgres')
     
     # Iterar sobre los archivos en el directorio
     for archivo in os.listdir(directorio):
