@@ -7,3 +7,13 @@ services:
       POSTGRES_PASSWORD: kj2aBv6f33cZ
     ports:
     - 5432:5432
+
+  sistema:
+    container_name: sistema
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: tail -F anything
+    depends_on:
+    - db
