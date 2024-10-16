@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 # URL de la API de cajeros automáticos
 url = "https://www.redbanc.cl/redbanc/data/Cajeros.json"
@@ -41,10 +42,13 @@ if response.status_code == 200:
             }
             geojson_data["features"].append(feature)
 
-    # Guardar los datos en un archivo GeoJSON
-    with open('cajeros_automaticos.geojson', 'w') as file:
+    # Crear el directorio "modificados" si no existe
+    os.makedirs('modificados', exist_ok=True)
+
+    # Guardar los datos en un archivo GeoJSON en el directorio "modificados"
+    with open('modificados/cajeros_automaticos.geojson', 'w') as file:
         json.dump(geojson_data, file, indent=4)
     
-    print("Datos de cajeros automáticos guardados correctamente como GeoJSON.")
+    print("Datos de cajeros automáticos guardados correctamente como GeoJSON en el directorio 'modificados'.")
 else:
     print(f"Error al descargar los datos. Código de estado: {response.status_code}")

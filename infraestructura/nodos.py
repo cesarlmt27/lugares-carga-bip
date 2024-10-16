@@ -1,11 +1,11 @@
 import os
 import pandas as pd
-from sqlalchemy import create_engine
-from geoalchemy2 import Geometry, WKTElement
+from geoalchemy2 import WKTElement
 
 def procesar_archivos(directorio):
-    # Configurar la conexión a la base de datos PostGIS
-    engine = create_engine('postgresql+psycopg://postgres:kj2aBv6f33cZ@postgis:5432/postgres')
+    # Crear el directorio 'modificados' si no existe
+    if not os.path.exists('modificados'):
+        os.makedirs('modificados')
     
     # Iterar sobre los archivos en el directorio
     for archivo in os.listdir(directorio):
@@ -39,16 +39,17 @@ def procesar_archivos(directorio):
             # Crear una columna de geometría a partir de longitud y latitud
             df_seleccionado.loc[:, 'geom'] = df_seleccionado.apply(lambda row: WKTElement(f'POINT({row.longitud} {row.latitud})', srid=4326), axis=1)
             
-            # Guardar el DataFrame en PostGIS
-            df_seleccionado.to_sql('nodos', engine, if_exists='append', index=False, dtype={'geom': Geometry('POINT', srid=4326)})
+            # Guardar el DataFrame en un archivo CSV en el directorio 'modificados'
+            archivo_csv = os.path.join('modificados', f'{os.path.splitext(archivo)[0]}.csv')
+            df_seleccionado.to_csv(archivo_csv, index=False)
             
             # Imprimir el DataFrame
-            print(f"DataFrame del archivo: {archivo}")
+            print(f"DataFrame del archivo: {archivo} guardado como {os.path.basename(archivo_csv)}")
             print(df_seleccionado)
             print("\n")
 
 # Directorio donde se encuentran los archivos .xlsx
-directorio_archivos = '../metadata/archivos'
+directorio_archivos = '../metadata/descargados'
 
 # Llamar a la función para procesar los archivos
 procesar_archivos(directorio_archivos)
