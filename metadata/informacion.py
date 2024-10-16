@@ -3,17 +3,21 @@ import requests
 import pandas as pd
 
 def descargar_y_procesar_xlsx(url, nombre_archivo):
-    # Crear el directorio 'archivos' si no existe
-    if not os.path.exists('archivos'):
-        os.makedirs('archivos')
+    # Crear el directorio 'descargados' si no existe
+    if not os.path.exists('descargados'):
+        os.makedirs('descargados')
+
+    # Crear el directorio 'modificados' si no existe
+    if not os.path.exists('modificados'):
+        os.makedirs('modificados')
 
     # Realizar la solicitud GET para descargar el archivo
     response = requests.get(url)
 
     # Verificar que la solicitud fue exitosa
     if response.status_code == 200:
-        # Guardar el contenido en un archivo local dentro del directorio 'archivos'
-        archivo_local = os.path.join('archivos', f'{nombre_archivo}.xlsx')
+        # Guardar el contenido en un archivo local dentro del directorio 'descargados'
+        archivo_local = os.path.join('descargados', f'{nombre_archivo}.xlsx')
         with open(archivo_local, 'wb') as file:
             file.write(response.content)
         
@@ -31,12 +35,19 @@ def descargar_y_procesar_xlsx(url, nombre_archivo):
         columnas_a_eliminar = ['ESTE', 'NORTE', 'LONGITUD', 'LATITUD']
         df = df.drop(columns=[col for col in columnas_a_eliminar if col in df.columns])
         
-        # Imprimir el nombre del DataFrame
-        print(f"DataFrame del archivo: {nombre_archivo}.xlsx")
+        # Convertir los nombres de las columnas a minúsculas
+        df.columns = df.columns.str.lower()
         
-        # Imprimir el DataFrame desde el header hacia abajo
-        print(df)
-        print("\n")
+        # Renombrar la columna 'dirección' a 'direccion' si existe
+        if 'dirección' in df.columns:
+            df.rename(columns={'dirección': 'direccion'}, inplace=True)
+        
+        # Guardar el DataFrame en un archivo CSV en el directorio 'modificados'
+        archivo_csv = os.path.join('modificados', f'{nombre_archivo}.csv')
+        df.to_csv(archivo_csv, index=False)
+        
+        # Imprimir el nombre del DataFrame
+        print(f"DataFrame del archivo: {nombre_archivo}.xlsx guardado como {nombre_archivo}.csv")
     else:
         print(f"Error al descargar el archivo: {response.status_code}")
 
