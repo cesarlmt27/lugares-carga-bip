@@ -13,6 +13,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - './amenazas:/app/amenazas'
+      - './infraestructura:/app/infraestructura'
+      - './metadata:/app/metadata'
+      - './sitio_web:/app/sitio_web'
+      - './sql:/app/sql'
     restart: always
     command: tail -F anything
     depends_on:
