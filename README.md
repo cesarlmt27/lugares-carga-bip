@@ -6,3 +6,7 @@
 - [Lugares de carga de tarjeta bip!_Centros bip! Alto Estándar](https://datos.gob.cl/dataset/5993b4cb-869c-4733-a124-7fcdd57bbb05/resource/fef2a0f6-84f8-4a1a-9a64-e2424efdd376/download)
 - [Lugares de carga de tarjeta bip!_Puntos bip!](https://datos.gob.cl/dataset/c2969d8a-df82-4a6c-a1f8-e5eba36af6cf/resource/cbd329c6-9fe6-4dc1-91e3-a99689fd0254/download)
 - [Lugares de carga de tarjeta bip!_ Estaciones de Metro](https://datos.gob.cl/dataset/ac76c913-3ad2-4831-ab2a-3b0d4165abdd/resource/3d54e961-d81b-4507-aeee-7a433e00a9bf/download)
+
+## Metadata
+- Información: [datos.gob - Subsecretaría de Transporte](https://datos.gob.cl/organization/subsecretaria_de_transporte)
+- Saldo de bip: [tarjetabip.cl](https://www.tarjetabip.cl/testPOCAE.php)
