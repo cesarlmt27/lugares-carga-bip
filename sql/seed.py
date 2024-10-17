@@ -19,7 +19,7 @@ def insertar_atropellos(datos_geojson, conn):
                 props['Intersecci'], props['Número'], props['Ruta'], props['Ubicaci_1'], props['Siniestros'], 
                 props['Fallecidos'], props['Graves'], props['Menos_grav'], props['Leves'], props['Ilesos'], coords[0], coords[1]
             ))
-        conn.commit()
+
 
 def insertar_cajeros(datos_json, conn):
     query = """
@@ -38,7 +38,7 @@ def insertar_cajeros(datos_json, conn):
                 banco['H. VIERNES'], banco['H. SABADO'], banco['H. DOMINGO'], banco['TIPO HORARIO'], 
                 banco['LONGITUD'], banco['LATITUD'], banco['LONGITUD'], banco['LATITUD']
             ))
-        conn.commit()
+        
 
 def insertar_feriados(datos_json, conn):
     query = """
@@ -53,7 +53,7 @@ def insertar_feriados(datos_json, conn):
             cur.execute(query, (
                 feriado['nombre'], feriado['comentarios'], feriado['fecha'], irrenunciable, feriado['tipo'], leyes
             ))
-        conn.commit()
+
 
 def insertar_robos(datos_geojson, conn):
     query = """
@@ -72,7 +72,6 @@ def insertar_robos(datos_geojson, conn):
                 props['nivel_dmcs'], props['nivel_robo'], props['nivel_rf'], props['nivel_rv'], props['size'],
                 coords[0], coords[1]
             ))
-        conn.commit()
 
 
 # Conectar a la base de datos
@@ -83,7 +82,7 @@ with open('../amenazas/atropellos.geojson', 'r', encoding='utf-8') as f:
     datos_atropellos = json.load(f)
 insertar_atropellos(datos_atropellos, conn)
 
-with open('../metadata/cajeros.json', 'r', encoding='utf-8') as f:
+with open('../metadata/cajeros.geojson', 'r', encoding='utf-8') as f:
     datos_cajeros = json.load(f)
 insertar_cajeros(datos_cajeros, conn)
 
@@ -95,5 +94,5 @@ with open('../amenazas/robos.json', 'r', encoding='utf-8') as f:
     datos_robos = json.load(f)
 insertar_robos(datos_robos, conn)
 
-# Cerrar la conexión
+conn.commit()
 conn.close()
