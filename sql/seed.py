@@ -47,16 +47,19 @@ def insertar_cajeros(cajeros_geojson, conn):
 
 def insertar_feriados(datos_json, conn):
     query = """
-    INSERT INTO feriados (nombre, comentarios, fecha, irrenunciable, tipo, leyes)
-    VALUES (%s, %s, %s, %s, %s, %s);
+    INSERT INTO feriados (nombre, comentarios, fecha, irrenunciable, tipo)
+    VALUES (%s, %s, %s, %s, %s);
     """
     
     with conn.cursor() as cur:
         for feriado in datos_json:
-            leyes = json.dumps(feriado['leyes'])  # Convertir a JSON
             irrenunciable = True if feriado['irrenunciable'] == "1" else False
             cur.execute(query, (
-                feriado['nombre'], feriado['comentarios'], feriado['fecha'], irrenunciable, feriado['tipo']
+                feriado['nombre'], 
+                feriado['comentarios'], 
+                feriado['fecha'], 
+                irrenunciable, 
+                feriado['tipo']
             ))
 
 
