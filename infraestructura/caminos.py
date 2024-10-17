@@ -2,8 +2,8 @@ import requests
 import json
 
 # Coordenadas de ejemplo (ubicación actual y destino)
-lat_origen, lon_origen = -33.4489, -70.6693  # Ejemplo: Santiago, Chile
-lat_destino, lon_destino = -33.4567, -70.6483  # Ejemplo: otro punto en Santiago
+lat_origen, lon_origen = -33.4576196,-70.6545054  # Ejemplo: Santiago, Chile
+lat_destino, lon_destino = -33.4538237,-70.6539031  # Ejemplo: otro punto en Santiago
 
 # URL de la API de OSRM (para caminar)
 url = f"http://router.project-osrm.org/route/v1/foot/{lon_origen},{lat_origen};{lon_destino},{lat_destino}?overview=full&geometries=geojson"
