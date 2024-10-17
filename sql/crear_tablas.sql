@@ -20,18 +20,18 @@ CREATE TABLE IF NOT EXISTS informacion (
 );
 
 CREATE TABLE IF NOT EXISTS cajeros (
-    atm INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    atm INTEGER,
     institucion VARCHAR(255),
     direccion VARCHAR(255),
-    comuna VARCHAR(100),
-    ciudad VARCHAR(100),
-    region VARCHAR(100),
-    categoria VARCHAR(100),
+    comuna VARCHAR(255),
+    ciudad VARCHAR(255),
+    region VARCHAR(255),
+    categoria VARCHAR(255),
     estado VARCHAR(50),
-    latitud FLOAT,
-    longitud FLOAT,
     coordenadas GEOMETRY(Point, 4326)
 );
+
 
 
 CREATE TABLE IF NOT EXISTS saldo (
