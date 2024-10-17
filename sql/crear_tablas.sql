@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS feriados (
     comentarios TEXT,
     fecha DATE,
     irrenunciable BOOLEAN,
-    tipo VARCHAR(50),
+    tipo VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS robos (
