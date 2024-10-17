@@ -62,24 +62,31 @@ def insertar_feriados(datos_json, conn):
                 feriado['tipo']
             ))
 
-
 def insertar_robos(datos_geojson, conn):
     query = """
-    INSERT INTO robos (feature_id, dmcs, robos, robos_f, robos_v, nivel_dmcs, nivel_robo, nivel_rf, nivel_rv, size, coordenadas)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    INSERT INTO robos (dmcs, robos, robos_f, robos_v, nivel_dmcs, nivel_robo, nivel_rf, nivel_rv, size, geom)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_Multi(ST_GeomFromGeoJSON(%s)), 4326));
     """
     
     with conn.cursor() as cur:
         for feature in datos_geojson['features']:
             props = feature['properties']
-            coords = feature['geometry']['coordinates'][0] 
+            geom = json.dumps(feature['geometry'])  # Convertir la geometría a formato GeoJSON
             
+            # Ejecutar la consulta para insertar los datos
             cur.execute(query, (
-                feature['id'],
-                props['dmcs'], props['robos'], props['robos_f'], props['robos_v'], 
-                props['nivel_dmcs'], props['nivel_robo'], props['nivel_rf'], props['nivel_rv'], props['size'],
-                coords[0], coords[1]
+                int(props['dmcs']), 
+                int(props['robos']), 
+                int(props['robos_f']), 
+                int(props['robos_v']), 
+                int(props['nivel_dmcs']), 
+                int(props['nivel_robo']), 
+                int(props['nivel_rf']), 
+                int(props['nivel_rv']), 
+                int(props['size']), 
+                geom
             ))
+
 
 
 # Conectar a la base de datos
