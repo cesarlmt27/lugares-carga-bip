@@ -21,9 +21,9 @@ def insertar_atropellos(datos_geojson, conn):
             ))
         conn.commit()
 
-def insertar_bancos(datos_json, conn):
+def insertar_cajeros(datos_json, conn):
     query = """
-    INSERT INTO bancos (atm, tipo, estado, institucion, administrador, direccion, comuna, ciudad, region,
+    INSERT INTO cajeros (atm, tipo, estado, institucion, administrador, direccion, comuna, ciudad, region,
                         tipo_local, local, horario_lunes, horario_martes, horario_miercoles, horario_jueves,
                         horario_viernes, horario_sabado, horario_domingo, tipo_horario, longitud, latitud, coordenadas)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
@@ -79,19 +79,19 @@ def insertar_robos(datos_geojson, conn):
 conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=postgis port=5432")
 
 # Cargar los datos desde archivos
-with open('atropellos.geojson', 'r', encoding='utf-8') as f:
+with open('../amenazas/atropellos.geojson', 'r', encoding='utf-8') as f:
     datos_atropellos = json.load(f)
 insertar_atropellos(datos_atropellos, conn)
 
-with open('bancos.json', 'r', encoding='utf-8') as f:
-    datos_bancos = json.load(f)
-insertar_bancos(datos_bancos, conn)
+with open('../metadata/cajeros.json', 'r', encoding='utf-8') as f:
+    datos_cajeros = json.load(f)
+insertar_cajeros(datos_cajeros, conn)
 
-with open('feriados.json', 'r', encoding='utf-8') as f:
+with open('../amenazas/feriados.json', 'r', encoding='utf-8') as f:
     datos_feriados = json.load(f)
 insertar_feriados(datos_feriados, conn)
 
-with open('all_hexagons_data.json', 'r', encoding='utf-8') as f:
+with open('../amenazas/robos.json', 'r', encoding='utf-8') as f:
     datos_robos = json.load(f)
 insertar_robos(datos_robos, conn)
 
