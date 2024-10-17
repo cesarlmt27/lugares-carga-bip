@@ -1,5 +1,5 @@
 import json
-
+import psycopg
 def insertar_atropellos(datos_geojson, conn):
     query = """
     INSERT INTO atropellos (año, claseaccid, cod_regi, region, comuna, cod_zona, zona, calle_uno, calle_dos,
@@ -54,6 +54,26 @@ def insertar_feriados(datos_json, conn):
             ))
         conn.commit()
 
+def insertar_robos(datos_geojson, conn):
+    query = """
+    INSERT INTO robos (feature_id, dmcs, robos, robos_f, robos_v, nivel_dmcs, nivel_robo, nivel_rf, nivel_rv, size, coordenadas)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    """
+    
+    with conn.cursor() as cur:
+        for feature in datos_geojson['features']:
+            props = feature['properties']
+            coords = feature['geometry']['coordinates'][0] 
+            
+            cur.execute(query, (
+                feature['id'],
+                props['dmcs'], props['robos'], props['robos_f'], props['robos_v'], 
+                props['nivel_dmcs'], props['nivel_robo'], props['nivel_rf'], props['nivel_rv'], props['size'],
+                coords[0], coords[1]
+            ))
+        conn.commit()
+
+
 # Conectar a la base de datos
 conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=postgis port=5432")
 
@@ -69,6 +89,10 @@ insertar_bancos(datos_bancos, conn)
 with open('feriados.json', 'r', encoding='utf-8') as f:
     datos_feriados = json.load(f)
 insertar_feriados(datos_feriados, conn)
+
+with open('all_hexagons_data.json', 'r', encoding='utf-8') as f:
+    datos_robos = json.load(f)
+insertar_robos(datos_robos, conn)
 
 # Cerrar la conexión
 conn.close()

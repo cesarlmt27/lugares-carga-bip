@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS nodos (
     geom GEOMETRY(Point, 4326)
 );
 
-CREATE TABLE atropellos (
+CREATE TABLE IF NOT EXISTS atropellos (
     id SERIAL PRIMARY KEY,
     año INT,
     claseaccid INT,
@@ -31,7 +31,7 @@ CREATE TABLE atropellos (
 );
 
 
-CREATE TABLE bancos (
+CREATE TABLE IF NOT EXISTS bancos (
     id SERIAL PRIMARY KEY,
     atm INT,
     tipo VARCHAR(50),
@@ -58,7 +58,7 @@ CREATE TABLE bancos (
 );
 
 
-CREATE TABLE feriados (
+CREATE TABLE IF NOT EXISTS feriados (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255),
     comentarios TEXT,
@@ -68,3 +68,17 @@ CREATE TABLE feriados (
     leyes JSONB
 );
 
+CREATE TABLE IF NOT EXISTS robos (
+    id serial PRIMARY KEY,
+    feature_id varchar,
+    dmcs double precision,
+    robos integer,
+    robos_f integer,
+    robos_v integer,
+    nivel_dmcs integer,
+    nivel_robo integer,
+    nivel_rf integer,
+    nivel_rv integer,
+    size double precision,
+    coordenadas geography(Point, 4326)
+);
