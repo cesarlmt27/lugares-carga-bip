@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS nodos (
     uuid UUID NOT NULL,
-    direccion VARCHAR(255),
     longitud DOUBLE PRECISION,
     latitud DOUBLE PRECISION,
     geom GEOMETRY(Point, 4326),
@@ -10,7 +9,7 @@ CREATE TABLE IF NOT EXISTS nodos (
 
 CREATE TABLE IF NOT EXISTS informacion (
     uuid UUID NOT NULL,
-    codigo INT,
+    codigo VARCHAR(255),
     entidad VARCHAR(255),
     direccion VARCHAR(255),
     comuna VARCHAR(255),
