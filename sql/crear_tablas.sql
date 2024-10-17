@@ -6,6 +6,16 @@ CREATE TABLE IF NOT EXISTS nodos (
     PRIMARY KEY (uuid)
 );
 
+CREATE TABLE caminos (
+    osm_id BIGINT PRIMARY KEY,         -- ID único del camino
+    highway VARCHAR(255),              -- Tipo de camino (calle, avenida, etc.)
+    name VARCHAR(255),                 -- Nombre del camino
+    geom GEOMETRY(LineString, 4326)    -- Geometría en formato LineString con SRID 4326 (WGS 84)
+);
+
+-- Crear un índice espacial para acelerar las consultas espaciales
+CREATE INDEX idx_caminos_geom ON caminos USING GIST (geom);
+
 
 CREATE TABLE IF NOT EXISTS informacion (
     uuid UUID NOT NULL,
@@ -85,6 +95,3 @@ CREATE TABLE IF NOT EXISTS robos (
     size INTEGER,
     geom geometry(MultiPolygon, 4326) -- Tipo geometry para multipolígonos
 );
-
-
-
