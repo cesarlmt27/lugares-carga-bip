@@ -1,10 +1,57 @@
 CREATE TABLE IF NOT EXISTS nodos (
-    id SERIAL PRIMARY KEY,
+    uuid UUID NOT NULL,
     direccion VARCHAR(255),
     longitud DOUBLE PRECISION,
     latitud DOUBLE PRECISION,
-    geom GEOMETRY(Point, 4326)
+    geom GEOMETRY(Point, 4326),
+    PRIMARY KEY (uuid)
 );
+
+
+CREATE TABLE IF NOT EXISTS informacion (
+    uuid UUID NOT NULL,
+    codigo INT,
+    entidad VARCHAR(255),
+    direccion VARCHAR(255),
+    comuna VARCHAR(255),
+    horario VARCHAR(255),
+    PRIMARY KEY (uuid),
+    FOREIGN KEY (uuid) REFERENCES nodos(uuid)
+);
+
+CREATE TABLE IF NOT EXISTS cajeros (
+    id SERIAL PRIMARY KEY,
+    atm INT,
+    tipo VARCHAR(50),
+    estado VARCHAR(50),
+    institucion VARCHAR(255),
+    administrador VARCHAR(255),
+    direccion VARCHAR(255),
+    comuna VARCHAR(255),
+    ciudad VARCHAR(255),
+    region VARCHAR(255),
+    tipo_local VARCHAR(50),
+    local VARCHAR(255),
+    horario_lunes VARCHAR(50),
+    horario_martes VARCHAR(50),
+    horario_miercoles VARCHAR(50),
+    horario_jueves VARCHAR(50),
+    horario_viernes VARCHAR(50),
+    horario_sabado VARCHAR(50),
+    horario_domingo VARCHAR(50),
+    tipo_horario VARCHAR(50),
+    longitud DOUBLE PRECISION,
+    latitud DOUBLE PRECISION,
+    coordenadas GEOMETRY(Point, 4326)
+);
+
+CREATE TABLE IF NOT EXISTS saldo (
+    numero_tarjeta VARCHAR(50) PRIMARY KEY,
+    estado_contrato VARCHAR(50),
+    saldo_tarjeta VARCHAR(20),
+    fecha_saldo TIMESTAMP
+);
+
 
 CREATE TABLE IF NOT EXISTS atropellos (
     id SERIAL PRIMARY KEY,
@@ -29,21 +76,6 @@ CREATE TABLE IF NOT EXISTS atropellos (
     ilesos INT,
     coordenadas GEOMETRY(Point, 4326)
 );
-
-CREATE TABLE IF NOT EXISTS cajeros (
-    atm INT PRIMARY KEY,
-    institucion VARCHAR(255),
-    direccion VARCHAR(255),
-    comuna VARCHAR(100),
-    ciudad VARCHAR(100),
-    region VARCHAR(100),
-    categoria VARCHAR(100),
-    estado VARCHAR(50),
-    latitud FLOAT,
-    longitud FLOAT,
-    coordenadas GEOMETRY(Point, 4326)
-);
-
 
 CREATE TABLE IF NOT EXISTS feriados (
     id SERIAL PRIMARY KEY,
