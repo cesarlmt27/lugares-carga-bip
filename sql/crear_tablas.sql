@@ -32,8 +32,6 @@ CREATE TABLE IF NOT EXISTS cajeros (
     coordenadas GEOMETRY(Point, 4326)
 );
 
-
-
 CREATE TABLE IF NOT EXISTS saldo (
     numero_tarjeta VARCHAR(50) PRIMARY KEY,
     estado_contrato VARCHAR(50),
