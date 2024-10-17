@@ -1,65 +1,34 @@
 import os
-import requests
 import pandas as pd
 
-def descargar_y_procesar_xlsx(url, nombre_archivo):
-    # Crear el directorio 'descargados' si no existe
-    if not os.path.exists('descargados'):
-        os.makedirs('descargados')
+def combinar_csv(directorio):
+    # Lista para almacenar los DataFrames
+    dataframes = []
 
-    # Crear el directorio 'modificados' si no existe
-    if not os.path.exists('modificados'):
-        os.makedirs('modificados')
+    # Iterar sobre los archivos en el directorio
+    for archivo in os.listdir(directorio):
+        if archivo.endswith('.csv'):
+            # Leer el archivo CSV
+            archivo_path = os.path.join(directorio, archivo)
+            df = pd.read_csv(archivo_path)
+            
+            # Seleccionar las columnas deseadas
+            columnas_deseadas = ['uuid', 'codigo', 'entidad', 'direccion', 'comuna', 'horario']
+            if all(col in df.columns for col in columnas_deseadas):
+                df_seleccionado = df[columnas_deseadas]
+                dataframes.append(df_seleccionado)
+    
+    # Concatenar todos los DataFrames
+    df_concatenado = pd.concat(dataframes, ignore_index=True)
+    
+    # Guardar el DataFrame concatenado en un nuevo archivo CSV
+    archivo_concatenado = 'informacion.csv'
+    df_concatenado.to_csv(archivo_concatenado, index=False)
+    
+    print(f"Archivo concatenado guardado como {archivo_concatenado}")
 
-    # Realizar la solicitud GET para descargar el archivo
-    response = requests.get(url)
+# Directorio donde se encuentran los archivos CSV
+directorio_modificados = '../infraestructura/modificados'
 
-    # Verificar que la solicitud fue exitosa
-    if response.status_code == 200:
-        # Guardar el contenido en un archivo local dentro del directorio 'descargados'
-        archivo_local = os.path.join('descargados', f'{nombre_archivo}.xlsx')
-        with open(archivo_local, 'wb') as file:
-            file.write(response.content)
-        
-        # Leer el archivo .xlsx
-        df = pd.read_excel(archivo_local, header=None)
-        
-        # Buscar la fila que contiene 'CODIGO' en la primera columna
-        header_row_index = df[df.iloc[:, 0] == 'CODIGO'].index[0]
-        
-        # Establecer esa fila como el header del DataFrame
-        df.columns = df.iloc[header_row_index]
-        df = df[header_row_index + 1:]
-        
-        # Eliminar las columnas no deseadas
-        columnas_a_eliminar = ['ESTE', 'NORTE', 'LONGITUD', 'LATITUD']
-        df = df.drop(columns=[col for col in columnas_a_eliminar if col in df.columns])
-        
-        # Convertir los nombres de las columnas a minúsculas
-        df.columns = df.columns.str.lower()
-        
-        # Renombrar la columna 'dirección' a 'direccion' si existe
-        if 'dirección' in df.columns:
-            df.rename(columns={'dirección': 'direccion'}, inplace=True)
-        
-        # Guardar el DataFrame en un archivo CSV en el directorio 'modificados'
-        archivo_csv = os.path.join('modificados', f'{nombre_archivo}.csv')
-        df.to_csv(archivo_csv, index=False)
-        
-        # Imprimir el nombre del DataFrame
-        print(f"DataFrame del archivo: {nombre_archivo}.xlsx guardado como {nombre_archivo}.csv")
-    else:
-        print(f"Error al descargar el archivo: {response.status_code}")
-
-# Diccionario de datos
-datos = {
-    'retail': 'https://datos.gob.cl/dataset/f0fad229-d59a-4992-8c7a-489d1e9ff58c/resource/2d177f41-08f9-471a-af5c-bc949267f053/download',
-    'estandar_normal': 'https://datos.gob.cl/dataset/29a758f3-4fe8-4582-afc7-8237b83aaddc/resource/8e827306-e9ef-4e84-a251-38d29a8f66d0/download',
-    'alto_estandar': 'https://datos.gob.cl/dataset/5993b4cb-869c-4733-a124-7fcdd57bbb05/resource/fef2a0f6-84f8-4a1a-9a64-e2424efdd376/download',
-    'puntos_bip': 'https://datos.gob.cl/dataset/c2969d8a-df82-4a6c-a1f8-e5eba36af6cf/resource/cbd329c6-9fe6-4dc1-91e3-a99689fd0254/download',
-    'estaciones_metro': 'https://datos.gob.cl/dataset/ac76c913-3ad2-4831-ab2a-3b0d4165abdd/resource/3d54e961-d81b-4507-aeee-7a433e00a9bf/download'
-}
-
-# Iterar sobre el diccionario y llamar a la función para cada URL
-for nombre_archivo, url in datos.items():
-    descargar_y_procesar_xlsx(url, nombre_archivo)
+# Llamar a la función para combinar los archivos CSV
+combinar_csv(directorio_modificados)
