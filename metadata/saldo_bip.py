@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-import os
 
 def peticion_post(numero_tarjeta):
     url = f"http://pocae.tstgo.cl/PortalCAE-WAR-MODULE/SesionPortalServlet?accion=6&NumDistribuidor=99&NomUsuario=usuInternet&NomHost=AFT&NomDominio=aft.cl&Trx&RutUsuario=0&NumTarjeta={numero_tarjeta}&bloqueable="
@@ -43,14 +42,11 @@ def devuelve_tarjeta_bip(numero_tarjeta):
     try:
         data = peticion_post(numero_tarjeta)
         
-        # Crear el directorio "modificados" si no existe
-        os.makedirs('modificados', exist_ok=True)
-        
-        # Guardar los datos en un archivo JSON en el directorio "modificados"
-        with open('modificados/tarjeta_bip.json', 'w') as json_file:
+        # Guardar los datos en un archivo JSON
+        with open('tarjeta_bip.json', 'w') as json_file:
             json.dump(data, json_file, indent=4)
         
-        print("Datos almacenados en 'modificados/tarjeta_bip.json'")
+        print("Datos almacenados en 'tarjeta_bip.json'")
     except Exception as e:
         print(f"Ocurrió un error inesperado: {e}")
 
