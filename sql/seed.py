@@ -21,22 +21,27 @@ def insertar_atropellos(datos_geojson, conn):
             ))
 
 
-def insertar_cajeros(datos_json, conn):
+def insertar_cajeros(cajeros_geojson, conn):
     query = """
-    INSERT INTO cajeros (atm, tipo, estado, institucion, administrador, direccion, comuna, ciudad, region,
-                        tipo_local, local, horario_lunes, horario_martes, horario_miercoles, horario_jueves,
-                        horario_viernes, horario_sabado, horario_domingo, tipo_horario, longitud, latitud, coordenadas)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    INSERT INTO cajeros (atm, institucion, direccion, comuna, ciudad, region, categoria, estado, coordenadas)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
     """
     
     with conn.cursor() as cur:
-        for banco in datos_json:
+        for feature in cajeros_geojson['features']:
+            props = feature['properties']
+            coords = feature['geometry']['coordinates']
             cur.execute(query, (
-                banco['ATM'], banco['TIPO'], banco['ESTADO'], banco['INSTITUCION'], banco['ADMINISTRADOR'], 
-                banco['DIRECCION'], banco['COMUNA'], banco['CIUDAD'], banco['REGION'], banco['TIPO LOCAL'], 
-                banco['LOCAL'], banco['H. LUNES'], banco['H. MARTES'], banco['H. MIERCOLES'], banco['H. JUEVES'], 
-                banco['H. VIERNES'], banco['H. SABADO'], banco['H. DOMINGO'], banco['TIPO HORARIO'], 
-                banco['LONGITUD'], banco['LATITUD'], banco['LONGITUD'], banco['LATITUD']
+                props.get('ATM'), 
+                props.get('institucion'), 
+                props.get('direccion'), 
+                props.get('comuna'), 
+                props.get('ciudad'), 
+                props.get('region'), 
+                props.get('categoria'), 
+                props.get('estado'),
+                coords[0],  # Longitud
+                coords[1]   # Latitud
             ))
         
 
