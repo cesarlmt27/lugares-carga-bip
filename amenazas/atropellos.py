@@ -17,7 +17,7 @@ response = requests.get(url, params=params)
 # Verificar si la solicitud fue exitosa
 if response.status_code == 200:
     # Guardar el contenido de la respuesta en un archivo GeoJSON
-    with open('atropellos_rm_2022.geojson', 'w') as file:
+    with open('atropellos.geojson', 'w') as file:
         file.write(response.text)
     print("Archivo GeoJSON descargado correctamente.")
 else:

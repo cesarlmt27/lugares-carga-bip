@@ -59,7 +59,7 @@ step_size_x = 50  # Un salto de 50 píxeles en el eje X
 step_size_y = 50  # Un salto de 50 píxeles en el eje Y
 
 # Abrir el archivo en modo lectura y escritura (r+), para agregar cada nuevo hexágono
-with open("all_hexagons_data.json", 'r+') as json_file:
+with open("robos.json", 'r+') as json_file:
     data = json.load(json_file)  # Leer los datos existentes
     
     # Recorrer todas las coordenadas X e Y
@@ -84,4 +84,4 @@ with open("all_hexagons_data.json", 'r+') as json_file:
     # Guardar los datos actualizados en el archivo JSON
     json_file.seek(0)
     json.dump(data, json_file, indent=4)
-    print("Datos guardados en all_hexagons_data.json")
+    print("Datos guardados en robos.json")

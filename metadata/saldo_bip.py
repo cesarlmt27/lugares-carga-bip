@@ -43,10 +43,10 @@ def devuelve_tarjeta_bip(numero_tarjeta):
         data = peticion_post(numero_tarjeta)
         
         # Guardar los datos en un archivo JSON
-        with open('tarjeta_bip.json', 'w') as json_file:
+        with open('saldo_bip.json', 'w') as json_file:
             json.dump(data, json_file, indent=4)
         
-        print("Datos almacenados en 'tarjeta_bip.json'")
+        print("Datos almacenados en 'saldo_bip.json'")
     except Exception as e:
         print(f"Ocurrió un error inesperado: {e}")
 

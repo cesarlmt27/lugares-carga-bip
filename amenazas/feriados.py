@@ -25,10 +25,10 @@ for attempt in range(max_retries):
             feriados_data = response.json()
             
             # Guardar los datos en un archivo JSON
-            with open('feriados_nacionales.json', 'w', encoding='utf-8') as file:
+            with open('feriados.json', 'w', encoding='utf-8') as file:
                 json.dump(feriados_data, file, indent=4, ensure_ascii=False)
             
-            print("Datos de feriados nacionales guardados correctamente en feriados_nacionales.json.")
+            print("Datos de feriados nacionales guardados correctamente en feriados.json.")
             break  # Salir del bucle si la solicitud fue exitosa
         else:
             print(f"Error al descargar los datos. Código de estado: {response.status_code}")
