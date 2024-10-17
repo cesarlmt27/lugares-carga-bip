@@ -27,9 +27,8 @@ CREATE TABLE IF NOT EXISTS atropellos (
     menos_grav INT,
     leves INT,
     ilesos INT,
-    coordenadas GEOMETRY(Point, 4326)  -- Tipo de dato espacial con SRID 4326
+    coordenadas GEOMETRY(Point, 4326)
 );
-
 
 CREATE TABLE IF NOT EXISTS bancos (
     id SERIAL PRIMARY KEY,
@@ -54,9 +53,8 @@ CREATE TABLE IF NOT EXISTS bancos (
     tipo_horario VARCHAR(50),
     longitud DOUBLE PRECISION,
     latitud DOUBLE PRECISION,
-    coordenadas GEOMETRY(Point, 4326)  -- Coordenadas espaciales
+    coordenadas GEOMETRY(Point, 4326)
 );
-
 
 CREATE TABLE IF NOT EXISTS feriados (
     id SERIAL PRIMARY KEY,
