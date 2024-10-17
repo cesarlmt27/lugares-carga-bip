@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS feriados (
     fecha DATE,
     irrenunciable BOOLEAN,
     tipo VARCHAR(50),
-    leyes JSONB
 );
 
 CREATE TABLE IF NOT EXISTS robos (
