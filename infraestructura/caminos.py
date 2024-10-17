@@ -5,21 +5,19 @@ import psycopg
 def cargar_caminos_postgis(edges, conn):
     query_insertar_caminos = """
     INSERT INTO caminos (osm_id, highway, name, geom)
-    VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));
-    """
+    VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326))
+    ON CONFLICT (osm_id) DO NOTHING;
+    """  # El "DO NOTHING" omite los registros que ya existen.
     
     with conn.cursor() as cur:
         for _, row in edges.iterrows():
-            # Verificar si osm_id es una lista o un solo valor, y usar el primer valor si es una lista
-            osm_id = row['osmid']
-            if isinstance(osm_id, list):
-                osm_id = osm_id[0]  # Tomar el primer valor de la lista
-            
-            line = row['geometry'].wkt  # Convertir la geometría a WKT
-            
-            # Ejecutar la inserción con osm_id corregido
+            osm_id = row['osmid'][0] if isinstance(row['osmid'], list) else row['osmid']
+            geom = row['geometry']
+            line = geom.wkt  # Convertir la geometría a Well-Known Text (WKT)
             cur.execute(query_insertar_caminos, (osm_id, row.get('highway'), row.get('name'), line))
         conn.commit()
+    print("Caminos cargados en PostGIS con éxito.")
+
 
 # Cargar la red caminable desde OpenStreetMap
 def descargar_red_caminable():
