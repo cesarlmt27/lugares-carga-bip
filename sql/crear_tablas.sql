@@ -69,11 +69,12 @@ CREATE TABLE IF NOT EXISTS atropellos (
 CREATE TABLE IF NOT EXISTS feriados (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255),
-    comentarios TEXT,
+    comentarios VARCHAR(255),
     fecha DATE,
     irrenunciable BOOLEAN,
     tipo VARCHAR(50)
 );
+
 
 CREATE TABLE IF NOT EXISTS robos (
     id serial PRIMARY KEY,
