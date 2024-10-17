@@ -27,8 +27,9 @@ CREATE TABLE atropellos (
     menos_grav INT,
     leves INT,
     ilesos INT,
-    coordenadas GEOMETRY(Point, 4326)
+    coordenadas GEOMETRY(Point, 4326)  -- Tipo de dato espacial con SRID 4326
 );
+
 
 CREATE TABLE bancos (
     id SERIAL PRIMARY KEY,
@@ -53,8 +54,9 @@ CREATE TABLE bancos (
     tipo_horario VARCHAR(50),
     longitud DOUBLE PRECISION,
     latitud DOUBLE PRECISION,
-    coordenadas GEOMETRY(Point, 4326)
+    coordenadas GEOMETRY(Point, 4326)  -- Coordenadas espaciales
 );
+
 
 CREATE TABLE feriados (
     id SERIAL PRIMARY KEY,
@@ -65,3 +67,4 @@ CREATE TABLE feriados (
     tipo VARCHAR(50),
     leyes JSONB
 );
+
