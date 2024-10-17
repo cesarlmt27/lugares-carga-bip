@@ -56,7 +56,7 @@ def insertar_feriados(datos_json, conn):
             leyes = json.dumps(feriado['leyes'])  # Convertir a JSON
             irrenunciable = True if feriado['irrenunciable'] == "1" else False
             cur.execute(query, (
-                feriado['nombre'], feriado['comentarios'], feriado['fecha'], irrenunciable, feriado['tipo'], leyes
+                feriado['nombre'], feriado['comentarios'], feriado['fecha'], irrenunciable, feriado['tipo']
             ))
 
 
