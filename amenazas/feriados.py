@@ -1,6 +1,5 @@
 import requests
 import json
-import os
 from time import sleep
 
 # URL de la API de feriados nacionales
@@ -25,14 +24,11 @@ for attempt in range(max_retries):
             # Convertir la respuesta en JSON
             feriados_data = response.json()
             
-            # Crear el directorio "modificados" si no existe
-            os.makedirs('modificados', exist_ok=True)
-            
-            # Guardar los datos en un archivo JSON en el directorio "modificados"
-            with open(os.path.join('modificados', 'feriados_nacionales.json'), 'w', encoding='utf-8') as file:
+            # Guardar los datos en un archivo JSON
+            with open('feriados_nacionales.json', 'w', encoding='utf-8') as file:
                 json.dump(feriados_data, file, indent=4, ensure_ascii=False)
             
-            print("Datos de feriados nacionales guardados correctamente en el directorio 'modificados'.")
+            print("Datos de feriados nacionales guardados correctamente en feriados_nacionales.json.")
             break  # Salir del bucle si la solicitud fue exitosa
         else:
             print(f"Error al descargar los datos. Código de estado: {response.status_code}")
