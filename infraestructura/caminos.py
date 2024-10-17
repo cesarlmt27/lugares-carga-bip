@@ -2,20 +2,19 @@ import osmnx as ox
 import psycopg
 import geopandas as gpd
 
-def descargar_red_caminable(bounding_box):
+def descargar_red_caminable(lugar):
     # Descargar la red caminable para la Región Metropolitana
-    print("Descargando la red caminable para la Región Metropolitana, Chile...")
-    G = ox.graph_from_bbox(north=bounding_box['north'], south=bounding_box['south'], 
-                           east=bounding_box['east'], west=bounding_box['west'], network_type='walk')
+    print(f"Descargando la red caminable para {lugar}...")
+    G = ox.graph_from_place(lugar, network_type='walk')
     
     # Convertir a GeoDataFrame
     edges = ox.graph_to_gdfs(G, nodes=False)
     print("Red caminable descargada con éxito.")
     
     # Guardar en archivo GeoJSON
-    print("Guardando los caminos en caminos_rm.geojson...")
-    edges.to_file("caminos_rm.geojson", driver="GeoJSON")
-    print("Caminos guardados en caminos_rm.geojson.")
+    print(f"Guardando los caminos en caminos_{lugar.replace(' ', '_')}.geojson...")
+    edges.to_file(f"caminos_{lugar.replace(' ', '_')}.geojson", driver="GeoJSON")
+    print(f"Caminos guardados en caminos_{lugar.replace(' ', '_')}.geojson.")
     
     return edges
 
@@ -36,16 +35,11 @@ def cargar_caminos_postgis(edges, conn):
     print("Caminos cargados en PostGIS con éxito.")
 
 def main():
-    # Bounding box para la Región Metropolitana
-    bounding_box = {
-        'north': -32.893,
-        'south': -34.837,
-        'east': -69.858,
-        'west': -71.809
-    }
+    # Definir el lugar
+    lugar = "Región Metropolitana de Santiago, Chile"
     
     # Descargar la red caminable
-    edges = descargar_red_caminable(bounding_box)
+    edges = descargar_red_caminable(lugar)
     
     # Conectar a la base de datos PostGIS
     conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=postgis port=5432")
