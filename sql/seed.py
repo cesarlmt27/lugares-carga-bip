@@ -26,7 +26,7 @@ def insertar_cajeros(datos_json, conn):
     INSERT INTO cajeros (atm, tipo, estado, institucion, administrador, direccion, comuna, ciudad, region,
                         tipo_local, local, horario_lunes, horario_martes, horario_miercoles, horario_jueves,
                         horario_viernes, horario_sabado, horario_domingo, tipo_horario, longitud, latitud, coordenadas)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
     """
     
     with conn.cursor() as cur:
