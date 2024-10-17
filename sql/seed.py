@@ -73,17 +73,17 @@ def insertar_robos(datos_geojson, conn):
             props = feature['properties']
             geom = json.dumps(feature['geometry'])  # Convertir la geometría a formato GeoJSON
             
-            # Ejecutar la consulta para insertar los datos
+            # Convertir a float los campos numéricos
             cur.execute(query, (
-                int(props['dmcs']), 
-                int(props['robos']), 
-                int(props['robos_f']), 
-                int(props['robos_v']), 
-                int(props['nivel_dmcs']), 
-                int(props['nivel_robo']), 
-                int(props['nivel_rf']), 
-                int(props['nivel_rv']), 
-                int(props['size']), 
+                float(props['dmcs']), 
+                float(props['robos']), 
+                float(props['robos_f']), 
+                float(props['robos_v']), 
+                float(props['nivel_dmcs']), 
+                float(props['nivel_robo']), 
+                float(props['nivel_rf']), 
+                float(props['nivel_rv']), 
+                float(props['size']), 
                 geom
             ))
 
