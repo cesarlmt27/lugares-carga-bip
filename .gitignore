@@ -1,4 +1,6 @@
 venv
-descargados
-modificados
+*.xlsx
+*.csv
+*.json
+*.geojson
 private
