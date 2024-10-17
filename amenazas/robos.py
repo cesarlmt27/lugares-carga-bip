@@ -39,7 +39,7 @@ height = 569
 srs = "EPSG:3857"
 
 # Creamos un archivo JSON y escribimos la estructura inicial
-with open("all_hexagons_data.json", 'w') as json_file:
+with open("robos.json", 'w') as json_file:
     json.dump({
         "type": "FeatureCollection",
         "features": [],
