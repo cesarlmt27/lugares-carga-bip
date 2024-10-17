@@ -75,18 +75,19 @@ CREATE TABLE IF NOT EXISTS feriados (
     tipo VARCHAR(50)
 );
 
-
 CREATE TABLE IF NOT EXISTS robos (
-    id serial PRIMARY KEY,
-    feature_id varchar,
-    dmcs double precision,
-    robos integer,
-    robos_f integer,
-    robos_v integer,
-    nivel_dmcs integer,
-    nivel_robo integer,
-    nivel_rf integer,
-    nivel_rv integer,
-    size double precision,
-    coordenadas geography(Point, 4326)
+    id SERIAL PRIMARY KEY,
+    dmcs INTEGER,
+    robos INTEGER,
+    robos_f INTEGER,
+    robos_v INTEGER,
+    nivel_dmcs INTEGER,
+    nivel_robo INTEGER,
+    nivel_rf INTEGER,
+    nivel_rv INTEGER,
+    size INTEGER,
+    geom geometry(MultiPolygon, 4326) -- Tipo geometry para multipolígonos
 );
+
+
+
