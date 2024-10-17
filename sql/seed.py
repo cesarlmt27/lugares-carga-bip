@@ -1,25 +1,40 @@
 import json
 import psycopg
 
-def insertar_atropellos(datos_geojson, conn):
+def insertar_nodos(csv_file_path, conn):
     query = """
-    INSERT INTO atropellos (año, claseaccid, cod_regi, region, comuna, cod_zona, zona, calle_uno, calle_dos,
-                            intersecci, numero, ruta, ubicacion_1, siniestros, fallecidos, graves, menos_grav,
-                            leves, ilesos, coordenadas)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    INSERT INTO nodos (uuid, direccion, longitud, latitud, geom)
+    VALUES (%s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
     """
     
-    with conn.cursor() as cur:
-        for feature in datos_geojson['features']:
-            props = feature['properties']
-            coords = feature['geometry']['coordinates'][0]
-            cur.execute(query, (
-                props['Año'], props['Claseaccid'], props['Cód_Regi'], props['Región'], props['Comuna'], 
-                props['Cód_Zona'], props['Zona'], props['Calle_Uno'], props['Calle_Dos'], 
-                props['Intersecci'], props['Número'], props['Ruta'], props['Ubicaci_1'], props['Siniestros'], 
-                props['Fallecidos'], props['Graves'], props['Menos_grav'], props['Leves'], props['Ilesos'], coords[0], coords[1]
-            ))
+    with open(csv_file_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        with conn.cursor() as cur:
+            for row in reader:
+                uuid = row['uuid']
+                longitud = float(row['longitud'])
+                latitud = float(row['latitud'])
+                cur.execute(query, (uuid, None, longitud, latitud, longitud, latitud))
 
+
+
+def insertar_informacion(csv_file_path, conn):
+    query = """
+    INSERT INTO informacion (uuid, codigo, entidad, direccion, comuna, horario)
+    VALUES (%s, %s, %s, %s, %s, %s);
+    """
+    
+    with open(csv_file_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        with conn.cursor() as cur:
+            for row in reader:
+                uuid = row['uuid']
+                codigo = int(row['codigo'])
+                entidad = row['entidad']
+                direccion = row['direccion']
+                comuna = row['comuna']
+                horario = row['horario']
+                cur.execute(query, (uuid, codigo, entidad, direccion, comuna, horario))
 
 def insertar_cajeros(cajeros_geojson, conn):
     query = """
@@ -43,7 +58,43 @@ def insertar_cajeros(cajeros_geojson, conn):
                 coords[0],  # Longitud
                 coords[1]   # Latitud
             ))
+
+def insertar_saldo(json_file_path, conn):
+    query = """
+    INSERT INTO saldo (numero_tarjeta, estado_contrato, saldo_tarjeta, fecha_saldo)
+    VALUES (%s, %s, %s, %s);
+    """
+    
+    with open(json_file_path, 'r') as jsonfile:
+        data = json.load(jsonfile)
+        numero_tarjeta = data['numero_tarjeta']
+        estado_contrato = data['estado_contrato']
+        saldo_tarjeta = data['saldo_tarjeta']
+        fecha_saldo = datetime.strptime(data['fecha_saldo'], "%d/%m/%Y %H:%M")
         
+        with conn.cursor() as cur:
+            cur.execute(query, (numero_tarjeta, estado_contrato, saldo_tarjeta, fecha_saldo))
+
+
+
+def insertar_atropellos(datos_geojson, conn):
+    query = """
+    INSERT INTO atropellos (año, claseaccid, cod_regi, region, comuna, cod_zona, zona, calle_uno, calle_dos,
+                            intersecci, numero, ruta, ubicacion_1, siniestros, fallecidos, graves, menos_grav,
+                            leves, ilesos, coordenadas)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    """
+    
+    with conn.cursor() as cur:
+        for feature in datos_geojson['features']:
+            props = feature['properties']
+            coords = feature['geometry']['coordinates'][0]
+            cur.execute(query, (
+                props['Año'], props['Claseaccid'], props['Cód_Regi'], props['Región'], props['Comuna'], 
+                props['Cód_Zona'], props['Zona'], props['Calle_Uno'], props['Calle_Dos'], 
+                props['Intersecci'], props['Número'], props['Ruta'], props['Ubicaci_1'], props['Siniestros'], 
+                props['Fallecidos'], props['Graves'], props['Menos_grav'], props['Leves'], props['Ilesos'], coords[0], coords[1]
+            ))
 
 def insertar_feriados(datos_json, conn):
     query = """
@@ -92,14 +143,19 @@ def insertar_robos(datos_geojson, conn):
 # Conectar a la base de datos
 conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=postgis port=5432")
 
-# Cargar los datos desde archivos
-with open('../amenazas/atropellos.geojson', 'r', encoding='utf-8') as f:
-    datos_atropellos = json.load(f)
-insertar_atropellos(datos_atropellos, conn)
+insertar_nodos('../infraestructura/nodos.csv', conn)
+
+insertar_informacion('../metadata/informacion.csv', conn)
 
 with open('../metadata/cajeros.geojson', 'r', encoding='utf-8') as f:
     datos_cajeros = json.load(f)
 insertar_cajeros(datos_cajeros, conn)
+
+insertar_saldo('../metadata/saldo_bip.json', conn)
+
+with open('../amenazas/atropellos.geojson', 'r', encoding='utf-8') as f:
+    datos_atropellos = json.load(f)
+insertar_atropellos(datos_atropellos, conn)
 
 with open('../amenazas/feriados.json', 'r', encoding='utf-8') as f:
     datos_feriados = json.load(f)
@@ -109,5 +165,6 @@ with open('../amenazas/robos.json', 'r', encoding='utf-8') as f:
     datos_robos = json.load(f)
 insertar_robos(datos_robos, conn)
 
+# Cerrar la conexión
 conn.commit()
 conn.close()
