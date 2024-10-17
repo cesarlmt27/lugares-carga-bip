@@ -22,7 +22,7 @@ def cargar_caminos_postgis(edges, conn):
 # Cargar la red caminable desde OpenStreetMap
 def descargar_red_caminable():
     print("Descargando la red caminable para Santiago, Chile...")
-    graph = ox.graph_from_place("Región Metropolitana de Santiago, Chile", network_type='walk')
+    graph = ox.graph_from_place("Santiago, Chile", network_type='walk')
     print("Red caminable descargada con éxito.")
     
     # Convertir a GeoDataFrame para obtener las aristas
