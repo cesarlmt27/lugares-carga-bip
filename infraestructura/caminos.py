@@ -1,6 +1,5 @@
 import osmnx as ox
 import psycopg
-import geopandas as gpd
 
 # Paso 1: Descargar la red caminable de OpenStreetMap usando osmnx
 def descargar_red_caminable(lugar):
