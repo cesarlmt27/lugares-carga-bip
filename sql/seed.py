@@ -1,10 +1,12 @@
+from datetime import datetime
 import json
 import psycopg
+import csv
 
 def insertar_nodos(csv_file_path, conn):
     query = """
-    INSERT INTO nodos (uuid, direccion, longitud, latitud, geom)
-    VALUES (%s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    INSERT INTO nodos (uuid, longitud, latitud, geom)
+    VALUES (%s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
     """
     
     with open(csv_file_path, newline='') as csvfile:
@@ -14,7 +16,7 @@ def insertar_nodos(csv_file_path, conn):
                 uuid = row['uuid']
                 longitud = float(row['longitud'])
                 latitud = float(row['latitud'])
-                cur.execute(query, (uuid, None, longitud, latitud, longitud, latitud))
+                cur.execute(query, (uuid, longitud, latitud, longitud, latitud))
 
 
 
@@ -29,7 +31,7 @@ def insertar_informacion(csv_file_path, conn):
         with conn.cursor() as cur:
             for row in reader:
                 uuid = row['uuid']
-                codigo = int(row['codigo'])
+                codigo = str(row['codigo'])
                 entidad = row['entidad']
                 direccion = row['direccion']
                 comuna = row['comuna']
