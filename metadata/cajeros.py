@@ -42,7 +42,7 @@ if response.status_code == 200:
             geojson_data["features"].append(feature)
 
     # Guardar los datos en un archivo GeoJSON
-    with open('cajeros_automaticos.geojson', 'w') as file:
+    with open('cajeros.geojson', 'w') as file:
         json.dump(geojson_data, file, indent=4)
     
     print("Datos de cajeros automáticos guardados correctamente como GeoJSON.")
