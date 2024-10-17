@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS atropellos (
     coordenadas GEOMETRY(Point, 4326)
 );
 
-CREATE TABLE IF NOT EXISTS bancos (
+CREATE TABLE IF NOT EXISTS cajeros (
     id SERIAL PRIMARY KEY,
     atm INT,
     tipo VARCHAR(50),
