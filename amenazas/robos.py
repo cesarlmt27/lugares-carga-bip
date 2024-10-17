@@ -1,5 +1,6 @@
 import requests
-import csv
+import json
+from datetime import datetime
 
 def get_all_hexagons(base_url, bbox, width, height, srs, x, y):
     # Construye la URL con los parámetros necesarios
@@ -37,49 +38,50 @@ width = 1358
 height = 569
 srs = "EPSG:3857"
 
-# Definir el tamaño del paso (step) para recorrer los píxeles en el mapa.
-step_size_x = 100  # Un salto de 100 píxeles en el eje X
-step_size_y = 100  # Un salto de 100 píxeles en el eje Y
+# Creamos un archivo JSON y escribimos la estructura inicial
+with open("all_hexagons_data.json", 'w') as json_file:
+    json.dump({
+        "type": "FeatureCollection",
+        "features": [],
+        "totalFeatures": "unknown",
+        "numberReturned": 0,
+        "timeStamp": datetime.now().isoformat(),
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "urn:ogc:def:crs:EPSG::3857"
+            }
+        }
+    }, json_file)
 
-# Abrir el archivo CSV para escribir los resultados
-with open("hexagons_data.csv", 'w', newline='') as csv_file:
-    csv_writer = csv.writer(csv_file)
-    
-    # Escribir el encabezado del archivo CSV (puedes modificar esto según los datos que quieras guardar)
-    csv_writer.writerow(["X", "Y", "dmcs", "robos", "robos_f", "robos_v", "nivel_dmcs", "nivel_robo", "nivel_rf", "nivel_rv", "size", "id"])
+# Definir el tamaño del paso (step) para recorrer los píxeles en el mapa.
+step_size_x = 50  # Un salto de 50 píxeles en el eje X
+step_size_y = 50  # Un salto de 50 píxeles en el eje Y
+
+# Abrir el archivo en modo lectura y escritura (r+), para agregar cada nuevo hexágono
+with open("all_hexagons_data.json", 'r+') as json_file:
+    data = json.load(json_file)  # Leer los datos existentes
     
     # Recorrer todas las coordenadas X e Y
+    hexagon_count = 0  # Contador de hexágonos encontrados
     for x in range(0, width, step_size_x):
         for y in range(0, height, step_size_y):
             # Obtener los datos para cada píxel
             hexagon_data = get_all_hexagons(base_url, bbox, width, height, srs, x, y)
             
             if hexagon_data and "features" in hexagon_data and len(hexagon_data["features"]) > 0:
-                # Si se encontraron hexágonos, procesamos los datos y los escribimos en el archivo CSV
-                for feature in hexagon_data["features"]:
-                    properties = feature["properties"]
-                    
-                    # Extraer los valores de los atributos que deseas almacenar en el CSV
-                    row = [
-                        x,  # Coordenada X del píxel
-                        y,  # Coordenada Y del píxel
-                        properties.get("dmcs", ""),
-                        properties.get("robos", ""),
-                        properties.get("robos_f", ""),
-                        properties.get("robos_v", ""),
-                        properties.get("nivel_dmcs", ""),
-                        properties.get("nivel_robo", ""),
-                        properties.get("nivel_rf", ""),
-                        properties.get("nivel_rv", ""),
-                        properties.get("size", ""),
-                        properties.get("id", "")
-                    ]
-                    
-                    # Escribir la fila en el archivo CSV
-                    csv_writer.writerow(row)
-                    
+                # Si se encontraron hexágonos, agregarlos a la estructura existente
+                data["features"].extend(hexagon_data["features"])
+                hexagon_count += len(hexagon_data["features"])  # Incrementar el contador de hexágonos
                 print(f"Datos para el pixel {x},{y} añadidos.")
             else:
                 print(f"No se obtuvieron datos para el pixel {x},{y} o no hay hexágonos.")
+    
+    # Actualizar los campos adicionales
+    data["numberReturned"] = hexagon_count
+    data["timeStamp"] = datetime.now().isoformat()
 
-print("Datos guardados en hexagons_data.csv")
+    # Guardar los datos actualizados en el archivo JSON
+    json_file.seek(0)
+    json.dump(data, json_file, indent=4)
+    print("Datos guardados en all_hexagons_data.json")
