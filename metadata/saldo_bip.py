@@ -51,5 +51,6 @@ def devuelve_tarjeta_bip(numero_tarjeta):
         print(f"Ocurrió un error inesperado: {e}")
 
 # Ejemplo de uso
-numero_tarjeta = input("Ingrese el número de tarjeta: ")
+# numero_tarjeta = input("Ingrese el número de tarjeta: ")
+numero_tarjeta = 123456
 devuelve_tarjeta_bip(numero_tarjeta)
