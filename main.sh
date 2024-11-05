@@ -26,3 +26,5 @@ python3 seed.py
 popd
 
 set +x
+
+tail -F /dev/null

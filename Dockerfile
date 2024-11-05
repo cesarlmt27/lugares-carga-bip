@@ -8,4 +8,5 @@ COPY main.sh /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ENTRYPOINT ["../entrypoint.sh"]
+# ENTRYPOINT ["tail -F /dev/null"]
+ENTRYPOINT ["./main.sh"]
