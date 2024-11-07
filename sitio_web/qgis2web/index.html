@@ -14,9 +14,11 @@
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
-        #map {
-            width: 1481px;
-            height: 920px;
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
         }
         </style>
         <title></title>
@@ -40,7 +42,7 @@
         <script src="data/atropellos_1.js"></script>
         <script src="data/robos_2.js"></script>
         <script src="data/cajeros_3.js"></script>
-        <script src="data/nodos_4.js"></script>
+        <script src="data/Lugaresdecarga_4.js"></script>
         <script src="data/ruta_5.js"></script>
         <script>
         var highlightLayer;
@@ -130,64 +132,32 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">comuna</th>\
+                        <td class="visible-with-data" id="comuna">' + (feature.properties['comuna'] !== null ? autolinker.link(feature.properties['comuna'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['año'] !== null ? autolinker.link(feature.properties['año'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">siniestros</th>\
+                        <td>' + (feature.properties['siniestros'] !== null ? autolinker.link(feature.properties['siniestros'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['claseaccid'] !== null ? autolinker.link(feature.properties['claseaccid'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">fallecidos</th>\
+                        <td>' + (feature.properties['fallecidos'] !== null ? autolinker.link(feature.properties['fallecidos'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['cod_regi'] !== null ? autolinker.link(feature.properties['cod_regi'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">graves</th>\
+                        <td>' + (feature.properties['graves'] !== null ? autolinker.link(feature.properties['graves'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['region'] !== null ? autolinker.link(feature.properties['region'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">menos_grav</th>\
+                        <td>' + (feature.properties['menos_grav'] !== null ? autolinker.link(feature.properties['menos_grav'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['comuna'] !== null ? autolinker.link(feature.properties['comuna'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">leves</th>\
+                        <td>' + (feature.properties['leves'] !== null ? autolinker.link(feature.properties['leves'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['cod_zona'] !== null ? autolinker.link(feature.properties['cod_zona'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['zona'] !== null ? autolinker.link(feature.properties['zona'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['calle_uno'] !== null ? autolinker.link(feature.properties['calle_uno'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['calle_dos'] !== null ? autolinker.link(feature.properties['calle_dos'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['intersecci'] !== null ? autolinker.link(feature.properties['intersecci'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['numero'] !== null ? autolinker.link(feature.properties['numero'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ruta'] !== null ? autolinker.link(feature.properties['ruta'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ubicacion_1'] !== null ? autolinker.link(feature.properties['ubicacion_1'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['siniestros'] !== null ? autolinker.link(feature.properties['siniestros'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fallecidos'] !== null ? autolinker.link(feature.properties['fallecidos'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['graves'] !== null ? autolinker.link(feature.properties['graves'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['menos_grav'] !== null ? autolinker.link(feature.properties['menos_grav'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['leves'] !== null ? autolinker.link(feature.properties['leves'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ilesos'] !== null ? autolinker.link(feature.properties['ilesos'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">ilesos</th>\
+                        <td>' + (feature.properties['ilesos'] !== null ? autolinker.link(feature.properties['ilesos'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -200,7 +170,7 @@
         function style_atropellos_1_0() {
             return {
                 pane: 'pane_atropellos_1',
-                radius: 4.0,
+                radius: 4.4,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -247,36 +217,6 @@
                 mouseover: highlightFeature,
             });
             var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['dmcs'] !== null ? autolinker.link(feature.properties['dmcs'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['robos'] !== null ? autolinker.link(feature.properties['robos'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['robos_f'] !== null ? autolinker.link(feature.properties['robos_f'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['robos_v'] !== null ? autolinker.link(feature.properties['robos_v'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nivel_dmcs'] !== null ? autolinker.link(feature.properties['nivel_dmcs'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nivel_robo'] !== null ? autolinker.link(feature.properties['nivel_robo'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nivel_rf'] !== null ? autolinker.link(feature.properties['nivel_rf'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nivel_rv'] !== null ? autolinker.link(feature.properties['nivel_rv'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['size'] !== null ? autolinker.link(feature.properties['size'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
-                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -297,7 +237,7 @@
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(213,180,60,1.0)',
-                interactive: true,
+                interactive: false,
             }
         }
         map.createPane('pane_robos_2');
@@ -305,7 +245,7 @@
         map.getPane('pane_robos_2').style['mix-blend-mode'] = 'normal';
         var layer_robos_2 = new L.geoJson(json_robos_2, {
             attribution: '',
-            interactive: true,
+            interactive: false,
             dataVar: 'json_robos_2',
             layerName: 'layer_robos_2',
             pane: 'pane_robos_2',
@@ -329,31 +269,28 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">institucion</th>\
+                        <td>' + (feature.properties['institucion'] !== null ? autolinker.link(feature.properties['institucion'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['atm'] !== null ? autolinker.link(feature.properties['atm'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">direccion</th>\
+                        <td>' + (feature.properties['direccion'] !== null ? autolinker.link(feature.properties['direccion'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['institucion'] !== null ? autolinker.link(feature.properties['institucion'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">comuna</th>\
+                        <td>' + (feature.properties['comuna'] !== null ? autolinker.link(feature.properties['comuna'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['direccion'] !== null ? autolinker.link(feature.properties['direccion'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">ciudad</th>\
+                        <td>' + (feature.properties['ciudad'] !== null ? autolinker.link(feature.properties['ciudad'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['comuna'] !== null ? autolinker.link(feature.properties['comuna'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">categoria</th>\
+                        <td>' + (feature.properties['categoria'] !== null ? autolinker.link(feature.properties['categoria'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['ciudad'] !== null ? autolinker.link(feature.properties['ciudad'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['region'] !== null ? autolinker.link(feature.properties['region'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['categoria'] !== null ? autolinker.link(feature.properties['categoria'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['estado'] !== null ? autolinker.link(feature.properties['estado'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">estado</th>\
+                        <td class="visible-with-data" id="estado">' + (feature.properties['estado'] !== null ? autolinker.link(feature.properties['estado'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -366,7 +303,7 @@
         function style_cajeros_3_0() {
             return {
                 pane: 'pane_cajeros_3',
-                radius: 4.0,
+                radius: 4.4,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -399,7 +336,7 @@
         });
         bounds_group.addLayer(layer_cajeros_3);
         map.addLayer(layer_cajeros_3);
-        function pop_nodos_4(feature, layer) {
+        function pop_Lugaresdecarga_4(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -414,13 +351,27 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['uuid'] !== null ? autolinker.link(feature.properties['uuid'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">longitud</th>\
+                        <td>' + (feature.properties['longitud'] !== null ? autolinker.link(feature.properties['longitud'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['longitud'] !== null ? autolinker.link(feature.properties['longitud'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">latitud</th>\
+                        <td>' + (feature.properties['latitud'] !== null ? autolinker.link(feature.properties['latitud'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['latitud'] !== null ? autolinker.link(feature.properties['latitud'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">informacion_entidad</th>\
+                        <td>' + (feature.properties['informacion_entidad'] !== null ? autolinker.link(feature.properties['informacion_entidad'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>informacion_direccion</strong><br />' + (feature.properties['informacion_direccion'] !== null ? autolinker.link(feature.properties['informacion_direccion'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">informacion_comuna</th>\
+                        <td>' + (feature.properties['informacion_comuna'] !== null ? autolinker.link(feature.properties['informacion_comuna'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">informacion_horario</th>\
+                        <td class="visible-with-data" id="informacion_horario">' + (feature.properties['informacion_horario'] !== null ? autolinker.link(feature.properties['informacion_horario'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -430,10 +381,10 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_nodos_4_0() {
+        function style_Lugaresdecarga_4_0() {
             return {
-                pane: 'pane_nodos_4',
-                radius: 4.0,
+                pane: 'pane_Lugaresdecarga_4',
+                radius: 4.4,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -442,30 +393,30 @@
                 weight: 1,
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(231,113,72,1.0)',
+                fillColor: 'rgba(75,137,231,1.0)',
                 interactive: true,
             }
         }
-        map.createPane('pane_nodos_4');
-        map.getPane('pane_nodos_4').style.zIndex = 404;
-        map.getPane('pane_nodos_4').style['mix-blend-mode'] = 'normal';
-        var layer_nodos_4 = new L.geoJson(json_nodos_4, {
+        map.createPane('pane_Lugaresdecarga_4');
+        map.getPane('pane_Lugaresdecarga_4').style.zIndex = 404;
+        map.getPane('pane_Lugaresdecarga_4').style['mix-blend-mode'] = 'normal';
+        var layer_Lugaresdecarga_4 = new L.geoJson(json_Lugaresdecarga_4, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_nodos_4',
-            layerName: 'layer_nodos_4',
-            pane: 'pane_nodos_4',
-            onEachFeature: pop_nodos_4,
+            dataVar: 'json_Lugaresdecarga_4',
+            layerName: 'layer_Lugaresdecarga_4',
+            pane: 'pane_Lugaresdecarga_4',
+            onEachFeature: pop_Lugaresdecarga_4,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_nodos_4_0(feature));
+                return L.circleMarker(latlng, style_Lugaresdecarga_4_0(feature));
             },
         });
-        bounds_group.addLayer(layer_nodos_4);
-        map.addLayer(layer_nodos_4);
+        bounds_group.addLayer(layer_Lugaresdecarga_4);
+        map.addLayer(layer_Lugaresdecarga_4);
         function pop_ruta_5(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -520,11 +471,11 @@
         .title += 'Search for a place';
         var overlaysTree = [
             {label: '<img src="legend/ruta_5.png" /> ruta', layer: layer_ruta_5},
-            {label: '<img src="legend/nodos_4.png" /> nodos', layer: layer_nodos_4},
+            {label: '<img src="legend/Lugaresdecarga_4.png" /> Lugares de carga', layer: layer_Lugaresdecarga_4},
             {label: '<img src="legend/cajeros_3.png" /> cajeros', layer: layer_cajeros_3},
             {label: '<img src="legend/robos_2.png" /> robos', layer: layer_robos_2},
             {label: '<img src="legend/atropellos_1.png" /> atropellos', layer: layer_atropellos_1},
-            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0},]
+            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
