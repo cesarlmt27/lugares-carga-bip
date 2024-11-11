@@ -1,97 +1,92 @@
+-- Crear tabla nodos
 CREATE TABLE IF NOT EXISTS nodos (
-    uuid UUID NOT NULL,
-    longitud DOUBLE PRECISION,
-    latitud DOUBLE PRECISION,
-    geom GEOMETRY(Point, 4326),
-    PRIMARY KEY (uuid)
+    uuid UUID NOT NULL,                -- Identificador único del nodo
+    longitud DOUBLE PRECISION,         -- Longitud geográfica del nodo
+    latitud DOUBLE PRECISION,          -- Latitud geográfica del nodo
+    geom GEOMETRY(Point, 4326),        -- Geometría del nodo en formato Point con SRID 4326 (WGS 84)
+    PRIMARY KEY (uuid)                 -- Clave primaria
 );
 
-CREATE TABLE caminos (
-    osm_id BIGINT PRIMARY KEY,         -- ID único del camino
-    highway VARCHAR(255),              -- Tipo de camino (calle, avenida, etc.)
-    name VARCHAR(255),                 -- Nombre del camino
-    geom GEOMETRY(LineString, 4326)    -- Geometría en formato LineString con SRID 4326 (WGS 84)
-);
-
--- Crear un índice espacial para acelerar las consultas espaciales
-CREATE INDEX idx_caminos_geom ON caminos USING GIST (geom);
-
-
+-- Crear tabla información
 CREATE TABLE IF NOT EXISTS informacion (
-    uuid UUID NOT NULL,
-    codigo VARCHAR(255),
-    entidad VARCHAR(255),
-    direccion VARCHAR(255),
-    comuna VARCHAR(255),
-    horario VARCHAR(255),
-    PRIMARY KEY (uuid),
-    FOREIGN KEY (uuid) REFERENCES nodos(uuid)
+    uuid UUID NOT NULL,                -- Identificador único, referencia a la tabla nodos
+    codigo VARCHAR(255),               -- Código de la entidad
+    entidad VARCHAR(255),              -- Nombre de la entidad
+    direccion VARCHAR(255),            -- Dirección de la entidad
+    comuna VARCHAR(255),               -- Comuna de la entidad
+    horario VARCHAR(255),              -- Horario de atención de la entidad
+    PRIMARY KEY (uuid),                -- Clave primaria
+    FOREIGN KEY (uuid) REFERENCES nodos(uuid) -- Clave foránea que referencia a la tabla nodos
 );
 
+-- Crear tabla cajeros
 CREATE TABLE IF NOT EXISTS cajeros (
-    id SERIAL PRIMARY KEY,
-    atm INTEGER,
-    institucion VARCHAR(255),
-    direccion VARCHAR(255),
-    comuna VARCHAR(255),
-    ciudad VARCHAR(255),
-    region VARCHAR(255),
-    categoria VARCHAR(255),
-    estado VARCHAR(50),
-    coordenadas GEOMETRY(Point, 4326)
+    id SERIAL PRIMARY KEY,             -- ID único del cajero
+    atm INTEGER,                       -- Número del cajero automático
+    institucion VARCHAR(255),          -- Institución a la que pertenece el cajero
+    direccion VARCHAR(255),            -- Dirección del cajero
+    comuna VARCHAR(255),               -- Comuna donde se encuentra el cajero
+    ciudad VARCHAR(255),               -- Ciudad donde se encuentra el cajero
+    region VARCHAR(255),               -- Región donde se encuentra el cajero
+    categoria VARCHAR(255),            -- Categoría del cajero
+    estado VARCHAR(50),                -- Estado del cajero
+    coordenadas GEOMETRY(Point, 4326)  -- Coordenadas geográficas del cajero en formato Point con SRID 4326 (WGS 84)
 );
 
+-- Crear tabla saldo
 CREATE TABLE IF NOT EXISTS saldo (
-    numero_tarjeta VARCHAR(50) PRIMARY KEY,
-    estado_contrato VARCHAR(50),
-    saldo_tarjeta VARCHAR(20),
-    fecha_saldo TIMESTAMP
+    numero_tarjeta VARCHAR(50) PRIMARY KEY, -- Número de la tarjeta, clave primaria
+    estado_contrato VARCHAR(50),            -- Estado del contrato de la tarjeta
+    saldo_tarjeta VARCHAR(20),              -- Saldo disponible en la tarjeta
+    fecha_saldo TIMESTAMP                   -- Fecha y hora del saldo
 );
 
-
+-- Crear tabla atropellos
 CREATE TABLE IF NOT EXISTS atropellos (
-    id SERIAL PRIMARY KEY,
-    año INT,
-    claseaccid INT,
-    cod_regi INT,
-    region VARCHAR(255),
-    comuna VARCHAR(255),
-    cod_zona INT,
-    zona VARCHAR(50),
-    calle_uno VARCHAR(255),
-    calle_dos VARCHAR(255),
-    intersecci VARCHAR(255),
-    numero INT,
-    ruta VARCHAR(255),
-    ubicacion_1 VARCHAR(50),
-    siniestros INT,
-    fallecidos INT,
-    graves INT,
-    menos_grav INT,
-    leves INT,
-    ilesos INT,
-    coordenadas GEOMETRY(Point, 4326)
+    id SERIAL PRIMARY KEY,             -- ID único del registro de atropello
+    año INT,                           -- Año del atropello
+    claseaccid INT,                    -- Clase de accidente
+    cod_regi INT,                      -- Código de la región
+    region VARCHAR(255),               -- Nombre de la región
+    comuna VARCHAR(255),               -- Nombre de la comuna
+    cod_zona INT,                      -- Código de la zona
+    zona VARCHAR(50),                  -- Nombre de la zona
+    calle_uno VARCHAR(255),            -- Primera calle involucrada
+    calle_dos VARCHAR(255),            -- Segunda calle involucrada
+    intersecci VARCHAR(255),           -- Intersección
+    numero INT,                        -- Número de la dirección
+    ruta VARCHAR(255),                 -- Ruta
+    ubicacion_1 VARCHAR(50),           -- Ubicación específica
+    siniestros INT,                    -- Número de siniestros
+    fallecidos INT,                    -- Número de fallecidos
+    graves INT,                        -- Número de heridos graves
+    menos_grav INT,                    -- Número de heridos menos graves
+    leves INT,                         -- Número de heridos leves
+    ilesos INT,                        -- Número de ilesos
+    coordenadas GEOMETRY(Point, 4326)  -- Coordenadas geográficas del atropello en formato Point con SRID 4326 (WGS 84)
 );
 
+-- Crear tabla feriados
 CREATE TABLE IF NOT EXISTS feriados (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    comentarios VARCHAR(255),
-    fecha DATE,
-    irrenunciable BOOLEAN,
-    tipo VARCHAR(50)
+    id SERIAL PRIMARY KEY,             -- ID único del feriado
+    nombre VARCHAR(255),               -- Nombre del feriado
+    comentarios VARCHAR(255),          -- Comentarios sobre el feriado
+    fecha DATE,                        -- Fecha del feriado
+    irrenunciable BOOLEAN,             -- Indica si el feriado es irrenunciable
+    tipo VARCHAR(50)                   -- Tipo de feriado
 );
 
+-- Crear tabla robos
 CREATE TABLE IF NOT EXISTS robos (
-    id SERIAL PRIMARY KEY,
-    dmcs INTEGER,
-    robos INTEGER,
-    robos_f INTEGER,
-    robos_v INTEGER,
-    nivel_dmcs INTEGER,
-    nivel_robo INTEGER,
-    nivel_rf INTEGER,
-    nivel_rv INTEGER,
-    size INTEGER,
-    geom geometry(MultiPolygon, 4326) -- Tipo geometry para multipolígonos
+    id SERIAL PRIMARY KEY,             -- ID único del registro de robo
+    dmcs INTEGER,                      -- DMCs
+    robos INTEGER,                     -- Número de robos
+    robos_f INTEGER,                   -- Número de robos frustrados
+    robos_v INTEGER,                   -- Número de robos violentos
+    nivel_dmcs INTEGER,                -- Nivel de DMCs
+    nivel_robo INTEGER,                -- Nivel de robos
+    nivel_rf INTEGER,                  -- Nivel de robos frustrados
+    nivel_rv INTEGER,                  -- Nivel de robos violentos
+    size INTEGER,                      -- Tamaño
+    geom GEOMETRY(MultiPolygon, 4326)  -- Geometría en formato MultiPolygon con SRID 4326 (WGS 84)
 );
