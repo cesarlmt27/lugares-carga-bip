@@ -1,15 +1,18 @@
 import requests
 import json
 from datetime import datetime
+import urllib3
 
-def get_all_hexagons(base_url, bbox, width, height, srs, x, y):
-    # Construye la URL con los parámetros necesarios
+# Desactivar las advertencias de SSL
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+def get_all_hexagons(base_url, bbox, width, height, srs, x, y, timeout=30):
     params = {
         'service': 'WMS',
         'request': 'GetFeatureInfo',
         'version': '1.1.1',
-        'layers': 'stop:Robos',
-        'query_layers': 'stop:Robos',
+        'layers': 'stop:RobosFuerza',
+        'query_layers': 'stop:RobosFuerza',
         'styles': '',
         'format': 'image/png',
         'transparent': 'true',
@@ -21,24 +24,44 @@ def get_all_hexagons(base_url, bbox, width, height, srs, x, y):
         'X': x,
         'Y': y
     }
-    
-    # Realiza la solicitud GET
-    response = requests.get(base_url, params=params)
-    if response.status_code == 200:
-        # Si la respuesta es exitosa, devuelve los datos en JSON
-        return response.json()
-    else:
-        print(f"Error {response.status_code}: No se pudieron obtener los datos.")
+
+    try:
+        response = requests.get(base_url, params=params, verify=False, timeout=timeout)
+        
+        # Verificar el código de estado
+        if response.status_code != 200:
+            print(f"Error {response.status_code}: No se pudieron obtener los datos.")
+            return None
+
+        # Verificar el tipo de contenido
+        content_type = response.headers.get('Content-Type', '')
+        if 'application/json' not in content_type:
+            print(f"Error: La respuesta no es JSON. Content-Type: {content_type}")
+            return None
+
+        # Intentar decodificar la respuesta como JSON
+        try:
+            return response.json()
+        except json.JSONDecodeError:
+            print("Error al decodificar JSON. Respuesta del servidor:")
+            print(response.text[:500])  # Mostrar los primeros 500 caracteres de la respuesta
+            return None
+
+    except requests.exceptions.ReadTimeout:
+        print(f"Error: La solicitud para el pixel {x},{y} excedió el tiempo de espera.")
+        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Error de conexión: {e}")
         return None
 
 # Parámetros para la solicitud
 base_url = "https://stop.carabineros.cl/geoserver/stop/wms/"
-bbox = "-7888224.882001906,-3968839.819651207,-7836324.139796271,-3947093.485104075"
-width = 1358
-height = 569
+bbox = "-7889476.538413658,-3970263.864888263,-7840862.588424286,-3942039.4921939606"
+width = 5088
+height = 2954
 srs = "EPSG:3857"
 
-# Creamos un archivo JSON y escribimos la estructura inicial
+# Inicializar el archivo JSON
 with open("robos.json", 'w') as json_file:
     json.dump({
         "type": "FeatureCollection",
@@ -55,33 +78,28 @@ with open("robos.json", 'w') as json_file:
     }, json_file)
 
 # Definir el tamaño del paso (step) para recorrer los píxeles en el mapa.
-step_size_x = 50  # Un salto de 50 píxeles en el eje X
-step_size_y = 50  # Un salto de 50 píxeles en el eje Y
+step_size_x = 25
+step_size_y = 25
 
 # Abrir el archivo en modo lectura y escritura (r+), para agregar cada nuevo hexágono
 with open("robos.json", 'r+') as json_file:
-    data = json.load(json_file)  # Leer los datos existentes
+    data = json.load(json_file)
+    hexagon_count = 0
     
-    # Recorrer todas las coordenadas X e Y
-    hexagon_count = 0  # Contador de hexágonos encontrados
     for x in range(0, width, step_size_x):
         for y in range(0, height, step_size_y):
-            # Obtener los datos para cada píxel
             hexagon_data = get_all_hexagons(base_url, bbox, width, height, srs, x, y)
             
             if hexagon_data and "features" in hexagon_data and len(hexagon_data["features"]) > 0:
-                # Si se encontraron hexágonos, agregarlos a la estructura existente
                 data["features"].extend(hexagon_data["features"])
-                hexagon_count += len(hexagon_data["features"])  # Incrementar el contador de hexágonos
+                hexagon_count += len(hexagon_data["features"])
                 print(f"Datos para el pixel {x},{y} añadidos.")
             else:
                 print(f"No se obtuvieron datos para el pixel {x},{y} o no hay hexágonos.")
-    
-    # Actualizar los campos adicionales
+
     data["numberReturned"] = hexagon_count
     data["timeStamp"] = datetime.now().isoformat()
 
-    # Guardar los datos actualizados en el archivo JSON
     json_file.seek(0)
     json.dump(data, json_file, indent=4)
     print("Datos guardados en robos.json")
