@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 import psycopg
 import csv
+import subprocess
 
 def insertar_nodos(csv_file_path, conn):
     query = """
@@ -18,6 +19,12 @@ def insertar_nodos(csv_file_path, conn):
                 latitud = float(row['latitud'])
                 cur.execute(query, (uuid, longitud, latitud, longitud, latitud))
 
+def insertar_rutas(conn):
+    # Descargar datos de OSM
+    subprocess.run(["wget", "http://download.geofabrik.de/south-america/chile-latest.osm.pbf", "-O", "/app/chile-latest.osm.pbf"], check=True)
+
+    # Importar datos de OSM a la base de datos
+    subprocess.run(["osm2pgsql", "-d", "postgres", "-U", "postgres", "-H", "db", "--create", "--slim", "-G", "/app/chile-latest.osm.pbf"], check=True)
 
 
 def insertar_informacion(csv_file_path, conn):
@@ -143,9 +150,11 @@ def insertar_robos(datos_geojson, conn):
 
 
 # Conectar a la base de datos
-conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=postgis port=5432")
+conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432")
 
 insertar_nodos('../infraestructura/nodos.csv', conn)
+
+insertar_rutas(conn)
 
 insertar_informacion('../metadata/informacion.csv', conn)
 

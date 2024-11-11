@@ -10,8 +10,12 @@ def execute_sql_file(file_path):
     cur.execute(sql)
 
 
-conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=postgis port=5432")
+conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432")
 cur = conn.cursor()
+
+# Crear extensiones
+cur.execute("CREATE EXTENSION postgis;")
+cur.execute("CREATE EXTENSION pgrouting;")
 
 # Llamar a la función con la ruta del archivo .sql
 execute_sql_file('crear_tablas.sql')

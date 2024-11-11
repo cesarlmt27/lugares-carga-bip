@@ -1,7 +1,7 @@
 services:
   db:
-    container_name: postgis
-    image: postgis/postgis:16-master
+    container_name: db
+    image: pgrouting/pgrouting:16-3.4-3.6.1
     restart: always
     environment:
       POSTGRES_PASSWORD: kj2aBv6f33cZ
@@ -20,5 +20,7 @@ services:
       - './sitio_web:/app/sitio_web'
       - './sql:/app/sql'
     restart: always
+    environment:
+      PGPASSWORD: kj2aBv6f33cZ
     depends_on:
     - db
