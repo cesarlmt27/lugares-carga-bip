@@ -103,3 +103,7 @@ with open("robos.json", 'r+') as json_file:
     json_file.seek(0)
     json.dump(data, json_file, indent=4)
     print("Datos guardados en robos.json")
+
+
+# Get para postman:
+# https://stop.carabineros.cl/geoserver/stop/wms/?service=WMS&request=GetMap&version=1.1.1&layers=stop%3ARobosFuerza&styles=&format=image%2Fpng&transparent=true&info_format=application%2Fjson&width=5088&height=2954&srs=EPSG%3A3857&bbox=-7889476.538413658%2C-3970263.864888263%2C-7840862.588424286%2C-3942039.4921939606
