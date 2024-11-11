@@ -22,7 +22,7 @@ popd
 pushd amenazas
 python3 atropellos.py
 python3 feriados.py
-python3 robos.py
+# python3 robos.py
 popd
 
 # Ejecutar scripts SQL
