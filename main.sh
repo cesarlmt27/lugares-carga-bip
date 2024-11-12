@@ -4,11 +4,15 @@ set -x
 
 echo "Inicio de la ejecución de scripts"
 
-# Ejecutar scripts de infraestructura
-pushd infraestructura
+# Ejecutar scripts de infraestructura/nodos
+pushd infraestructura/nodos
 python3 datosgob.py
 python3 nodos.py
-python3 caminos.py
+popd
+
+# Ejecutar scripts de infraestructura/aristas
+pushd infraestructura/aristas
+python3 aristas.py
 popd
 
 # Ejecutar scripts de metadata

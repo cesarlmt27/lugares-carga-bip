@@ -1,6 +1,7 @@
 venv
+private
 *.xlsx
 *.csv
 *.json
 *.geojson
-private
+*pbf
