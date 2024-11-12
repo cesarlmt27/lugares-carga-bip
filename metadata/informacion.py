@@ -28,7 +28,7 @@ def combinar_csv(directorio):
     print(f"Archivo concatenado guardado como {archivo_concatenado}")
 
 # Directorio donde se encuentran los archivos CSV
-directorio_modificados = '../infraestructura/modificados'
+directorio_modificados = '../infraestructura/nodos/modificados'
 
 # Llamar a la función para combinar los archivos CSV
 combinar_csv(directorio_modificados)
