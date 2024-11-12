@@ -19,12 +19,12 @@ def insertar_nodos(csv_file_path, conn):
                 latitud = float(row['latitud'])
                 cur.execute(query, (uuid, longitud, latitud, longitud, latitud))
 
-def insertar_rutas(conn):
-    # Descargar datos de OSM
-    subprocess.run(["wget", "http://download.geofabrik.de/south-america/chile-latest.osm.pbf", "-O", "/app/chile-latest.osm.pbf"], check=True)
-
+def insertar_rutas(chile, rm):
     # Importar datos de OSM a la base de datos
-    subprocess.run(["osm2pgsql", "-d", "postgres", "-U", "postgres", "-H", "db", "--create", "--slim", "-G", "/app/chile-latest.osm.pbf"], check=True)
+    subprocess.run(["osm2pgsql", "-d", "postgres", "-U", "postgres", "-H", "db", "--create", "--slim", "-G", chile], check=True)
+
+    # Importar límites administrativos a la base de datos
+    subprocess.run(["ogr2ogr", "-f", "PostgreSQL", "PG:dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432", rm, "-nln", "rm_santiago"], check=True)
 
 
 def insertar_informacion(csv_file_path, conn):
@@ -152,9 +152,9 @@ def insertar_robos(datos_geojson, conn):
 # Conectar a la base de datos
 conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432")
 
-insertar_nodos('../infraestructura/nodos.csv', conn)
+insertar_nodos('../infraestructura/nodos/nodos.csv', conn)
 
-insertar_rutas(conn)
+insertar_rutas('../infraestructura/aristas/chile-latest.osm.pbf', '../infraestructura/aristas/rm_santiago.geojson')
 
 insertar_informacion('../metadata/informacion.csv', conn)
 
