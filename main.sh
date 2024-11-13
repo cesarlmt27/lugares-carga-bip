@@ -11,9 +11,9 @@ python3 nodos.py
 popd
 
 # Ejecutar scripts de infraestructura/aristas
-pushd infraestructura/aristas
-python3 aristas.py
-popd
+# pushd infraestructura/aristas
+# python3 aristas.py
+# popd
 
 # Ejecutar scripts de metadata
 pushd metadata
