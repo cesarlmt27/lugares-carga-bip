@@ -21,10 +21,24 @@ def insertar_nodos(csv_file_path, conn):
 
 def insertar_rutas(chile, rm):
     # Importar datos de OSM a la base de datos
-    subprocess.run(["osm2pgsql", "-d", "postgres", "-U", "postgres", "-H", "db", "--create", "--slim", "-G", chile], check=True)
+    subprocess.run([
+        "osm2pgsql",
+        "-d", "postgres",
+        "-U", "postgres",
+        "-H", "db",
+        "--create",
+        "-G",
+        chile
+    ], check=True)
 
     # Importar límites administrativos a la base de datos
-    subprocess.run(["ogr2ogr", "-f", "PostgreSQL", "PG:dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432", rm, "-nln", "rm_santiago"], check=True)
+    subprocess.run([
+        "ogr2ogr",
+        "-f", "PostgreSQL",
+        "PG:dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432",
+        rm,
+        "-nln", "rm_santiago"
+    ], check=True)
 
 
 def insertar_informacion(csv_file_path, conn):
