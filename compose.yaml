@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_PASSWORD: kj2aBv6f33cZ
     ports:
-    - 5432:5432
+      - 5432:5432
 
   sistema:
     container_name: sistema
@@ -23,4 +23,20 @@ services:
     environment:
       PGPASSWORD: kj2aBv6f33cZ
     depends_on:
-    - db
+      - db
+
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.26.0
+    container_name: geoserver
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - './private/geoserver_data:/opt/geoserver_data'
+    environment:
+      - GEOSERVER_ADMIN_USER=admin
+      - GEOSERVER_ADMIN_PASSWORD=geoserver
+      - ROOT_WEBAPP_REDIRECT=true
+      - SKIP_DEMO_DATA=true
+    depends_on:
+      - db
