@@ -1,3 +1,7 @@
+-- Crear extensiones
+CREATE EXTENSION postgis;
+CREATE EXTENSION pgrouting;
+
 -- Crear tabla nodos
 CREATE TABLE IF NOT EXISTS nodos (
     uuid UUID NOT NULL,                -- Identificador único del nodo
