@@ -31,8 +31,9 @@ popd
 
 # Ejecutar scripts SQL
 pushd sql
-python3 ejecutar_sql.py
+python3 ejecutar_sql.py crear_tablas.sql
 python3 seed.py
+python3 ejecutar_sql.py post_seed.sql
 popd
 
 echo "Finalización de la ejecución de scripts"

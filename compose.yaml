@@ -38,5 +38,6 @@ services:
       - GEOSERVER_ADMIN_PASSWORD=geoserver
       - ROOT_WEBAPP_REDIRECT=true
       - SKIP_DEMO_DATA=true
+      - ENABLE_JSONP=true
     depends_on:
       - db
