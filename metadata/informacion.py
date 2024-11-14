@@ -13,7 +13,7 @@ def combinar_csv(directorio):
             df = pd.read_csv(archivo_path)
             
             # Seleccionar las columnas deseadas
-            columnas_deseadas = ['uuid', 'codigo', 'entidad', 'direccion', 'comuna', 'horario']
+            columnas_deseadas = ['codigo', 'entidad', 'direccion', 'comuna', 'horario']
             if all(col in df.columns for col in columnas_deseadas):
                 df_seleccionado = df[columnas_deseadas]
                 dataframes.append(df_seleccionado)

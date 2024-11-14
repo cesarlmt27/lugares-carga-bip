@@ -6,18 +6,17 @@ import subprocess
 
 def insertar_nodos(csv_file_path, conn):
     query = """
-    INSERT INTO nodos (uuid, longitud, latitud, geom)
-    VALUES (%s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
+    INSERT INTO nodos (longitud, latitud, geom)
+    VALUES (%s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
     """
     
     with open(csv_file_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         with conn.cursor() as cur:
             for row in reader:
-                uuid = row['uuid']
                 longitud = float(row['longitud'])
                 latitud = float(row['latitud'])
-                cur.execute(query, (uuid, longitud, latitud, longitud, latitud))
+                cur.execute(query, (longitud, latitud, longitud, latitud))
 
 def insertar_rutas(chile, rm):
     # Importar datos de OSM a la base de datos
@@ -43,21 +42,20 @@ def insertar_rutas(chile, rm):
 
 def insertar_informacion(csv_file_path, conn):
     query = """
-    INSERT INTO informacion (uuid, codigo, entidad, direccion, comuna, horario)
-    VALUES (%s, %s, %s, %s, %s, %s);
+    INSERT INTO informacion (codigo, entidad, direccion, comuna, horario)
+    VALUES (%s, %s, %s, %s, %s);
     """
     
     with open(csv_file_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         with conn.cursor() as cur:
             for row in reader:
-                uuid = row['uuid']
                 codigo = str(row['codigo'])
                 entidad = row['entidad']
                 direccion = row['direccion']
                 comuna = row['comuna']
                 horario = row['horario']
-                cur.execute(query, (uuid, codigo, entidad, direccion, comuna, horario))
+                cur.execute(query, (codigo, entidad, direccion, comuna, horario))
 
 def insertar_cajeros(cajeros_geojson, conn):
     query = """

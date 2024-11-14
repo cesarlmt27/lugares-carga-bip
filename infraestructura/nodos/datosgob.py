@@ -49,9 +49,6 @@ def descargar_y_procesar_xlsx(url, nombre_archivo):
         elif 'nombrefantasia' in df.columns:
             df.drop(columns=['nombrefantasia'], inplace=True)
         
-        # Generar un UUID para cada fila y agregarlo como la primera columna
-        df.insert(0, 'uuid', [str(uuid.uuid4()) for _ in range(len(df))])
-        
         # Guardar el DataFrame en un archivo CSV en el directorio 'modificados'
         archivo_csv = os.path.join('modificados', f'{nombre_archivo}.csv')
         df.to_csv(archivo_csv, index=False)

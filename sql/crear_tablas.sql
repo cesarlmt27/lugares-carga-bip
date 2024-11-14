@@ -4,23 +4,21 @@ CREATE EXTENSION pgrouting;
 
 -- Crear tabla nodos
 CREATE TABLE IF NOT EXISTS nodos (
-    uuid UUID NOT NULL,                -- Identificador único del nodo
+    id SERIAL PRIMARY KEY,             -- ID único del nodo
     longitud DOUBLE PRECISION,         -- Longitud geográfica del nodo
     latitud DOUBLE PRECISION,          -- Latitud geográfica del nodo
-    geom GEOMETRY(Point, 4326),        -- Geometría del nodo en formato Point con SRID 4326 (WGS 84)
-    PRIMARY KEY (uuid)                 -- Clave primaria
+    geom GEOMETRY(Point, 4326)         -- Geometría del nodo en formato Point con SRID 4326 (WGS 84)
 );
 
 -- Crear tabla información
 CREATE TABLE IF NOT EXISTS informacion (
-    uuid UUID NOT NULL,                -- Identificador único, referencia a la tabla nodos
+    id SERIAL PRIMARY KEY,             -- ID único de la información, referencia a la tabla nodos
     codigo VARCHAR(255),               -- Código de la entidad
     entidad VARCHAR(255),              -- Nombre de la entidad
     direccion VARCHAR(255),            -- Dirección de la entidad
     comuna VARCHAR(255),               -- Comuna de la entidad
     horario VARCHAR(255),              -- Horario de atención de la entidad
-    PRIMARY KEY (uuid),                -- Clave primaria
-    FOREIGN KEY (uuid) REFERENCES nodos(uuid) -- Clave foránea que referencia a la tabla nodos
+    FOREIGN KEY (id) REFERENCES nodos(id) -- Clave foránea que referencia a la tabla nodos
 );
 
 -- Crear tabla cajeros
