@@ -7,9 +7,14 @@ def execute_sql_file(file_path):
     with open(file_path, 'r') as file:
         sql = file.read()
 
-    # Ejecutar la consulta
-    cur.execute(sql)
+    # Dividir el contenido del archivo en sentencias individuales
+    statements = sql.split(';')
 
+    # Ejecutar cada sentencia y hacer commit
+    for statement in statements:
+        if statement.strip():  # Ignorar sentencias vacías
+            cur.execute(statement)
+            conn.commit()
 
 conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432")
 cur = conn.cursor()
@@ -23,9 +28,6 @@ sql_file_path = sys.argv[1]
 
 # Llamar a la función con la ruta del archivo .sql
 execute_sql_file(sql_file_path)
-
-# Hacer los cambios persistentes en la base de datos
-conn.commit()
 
 cur.close()
 conn.close()
