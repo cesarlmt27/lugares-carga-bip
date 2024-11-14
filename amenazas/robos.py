@@ -1,4 +1,4 @@
-import requests
+import requests 
 import json
 from datetime import datetime
 import urllib3
@@ -81,6 +81,14 @@ with open("robos.json", 'w') as json_file:
 step_size_x = 25
 step_size_y = 25
 
+# Función para verificar si un *feature* ya existe en la lista
+def feature_duplicado(nuevo_feature, lista_features):
+    for feature in lista_features:
+        if (nuevo_feature["geometry"] == feature["geometry"] and
+            nuevo_feature["properties"] == feature["properties"]):
+            return True
+    return False
+
 # Abrir el archivo en modo lectura y escritura (r+), para agregar cada nuevo hexágono
 with open("robos.json", 'r+') as json_file:
     data = json.load(json_file)
@@ -91,9 +99,14 @@ with open("robos.json", 'r+') as json_file:
             hexagon_data = get_all_hexagons(base_url, bbox, width, height, srs, x, y)
             
             if hexagon_data and "features" in hexagon_data and len(hexagon_data["features"]) > 0:
-                data["features"].extend(hexagon_data["features"])
-                hexagon_count += len(hexagon_data["features"])
-                print(f"Datos para el pixel {x},{y} añadidos.")
+                for feature in hexagon_data["features"]:
+                    # Verificar si el *feature* ya existe antes de agregarlo
+                    if not feature_duplicado(feature, data["features"]):
+                        data["features"].append(feature)
+                        hexagon_count += 1
+                        print(f"Feature añadido para el pixel {x},{y}.")
+                    else:
+                        print(f"Feature duplicado omitido para el pixel {x},{y}.")
             else:
                 print(f"No se obtuvieron datos para el pixel {x},{y} o no hay hexágonos.")
 
@@ -103,7 +116,3 @@ with open("robos.json", 'r+') as json_file:
     json_file.seek(0)
     json.dump(data, json_file, indent=4)
     print("Datos guardados en robos.json")
-
-
-# Get para postman:
-# https://stop.carabineros.cl/geoserver/stop/wms/?service=WMS&request=GetMap&version=1.1.1&layers=stop%3ARobosFuerza&styles=&format=image%2Fpng&transparent=true&info_format=application%2Fjson&width=5088&height=2954&srs=EPSG%3A3857&bbox=-7889476.538413658%2C-3970263.864888263%2C-7840862.588424286%2C-3942039.4921939606
