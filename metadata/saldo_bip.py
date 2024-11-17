@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import sys
 
 def peticion_post(numero_tarjeta):
     url = f"http://pocae.tstgo.cl/PortalCAE-WAR-MODULE/SesionPortalServlet?accion=6&NumDistribuidor=99&NomUsuario=usuInternet&NomHost=AFT&NomDominio=aft.cl&Trx&RutUsuario=0&NumTarjeta={numero_tarjeta}&bloqueable="
@@ -50,7 +51,10 @@ def devuelve_tarjeta_bip(numero_tarjeta):
     except Exception as e:
         print(f"Ocurrió un error inesperado: {e}")
 
-# Ejemplo de uso
-# numero_tarjeta = input("Ingrese el número de tarjeta: ")
-numero_tarjeta = 123456
-devuelve_tarjeta_bip(numero_tarjeta)
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Uso: python saldo_bip.py <numero_tarjeta>")
+        sys.exit(1)
+    
+    numero_tarjeta = sys.argv[1]
+    devuelve_tarjeta_bip(numero_tarjeta)
