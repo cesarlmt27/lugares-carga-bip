@@ -19,7 +19,7 @@ popd
 pushd metadata
 python3 cajeros.py
 python3 informacion.py
-python3 saldo_bip.py
+python3 saldo_bip.py 123456
 popd
 
 # Ejecutar scripts de amenazas
@@ -32,6 +32,7 @@ popd
 # Ejecutar scripts SQL
 pushd sql
 python3 ejecutar_sql.py crear_tablas.sql
+python3 ingresar_saldo.py
 python3 seed.py
 python3 ejecutar_sql.py post_seed.sql
 popd

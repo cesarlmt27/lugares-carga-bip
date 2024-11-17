@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 import psycopg
 import csv
@@ -80,22 +79,6 @@ def insertar_cajeros(cajeros_geojson, conn):
                 coords[1]   # Latitud
             ))
 
-def insertar_saldo(json_file_path, conn):
-    query = """
-    INSERT INTO saldo (numero_tarjeta, estado_contrato, saldo_tarjeta, fecha_saldo)
-    VALUES (%s, %s, %s, %s);
-    """
-    
-    with open(json_file_path, 'r') as jsonfile:
-        data = json.load(jsonfile)
-        numero_tarjeta = data['numero_tarjeta']
-        estado_contrato = data['estado_contrato']
-        saldo_tarjeta = data['saldo_tarjeta']
-        fecha_saldo = datetime.strptime(data['fecha_saldo'], "%d/%m/%Y %H:%M")
-        
-        with conn.cursor() as cur:
-            cur.execute(query, (numero_tarjeta, estado_contrato, saldo_tarjeta, fecha_saldo))
-
 
 
 def insertar_atropellos(datos_geojson, conn):
@@ -173,8 +156,6 @@ insertar_informacion('../metadata/informacion.csv', conn)
 with open('../metadata/cajeros.geojson', 'r', encoding='utf-8') as f:
     datos_cajeros = json.load(f)
 insertar_cajeros(datos_cajeros, conn)
-
-insertar_saldo('../metadata/saldo_bip.json', conn)
 
 with open('../amenazas/atropellos.geojson', 'r', encoding='utf-8') as f:
     datos_atropellos = json.load(f)
