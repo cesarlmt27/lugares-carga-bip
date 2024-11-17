@@ -19,9 +19,11 @@ services:
       - './metadata:/app/metadata'
       - './sitio_web:/app/sitio_web'
       - './sql:/app/sql'
-    restart: always
+    restart: unless-stopped
     environment:
       PGPASSWORD: kj2aBv6f33cZ
+    ports:
+      - 5000:5000
     depends_on:
       - db
 

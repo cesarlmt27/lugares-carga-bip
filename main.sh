@@ -39,6 +39,9 @@ popd
 
 echo "Finalización de la ejecución de scripts"
 
-set +x
+# Ejecutar la API
+pushd sitio_web
+python3 app.py
+popd
 
-tail -F /dev/null
+set +x
