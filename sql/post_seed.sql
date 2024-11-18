@@ -16,3 +16,29 @@ UPDATE rm_line SET cost = ST_Length(ST_Transform(way, 32719));
 
 -- Crear la topología para la tabla, generando `source` y `target` en cada arista
 SELECT pgr_createTopology('rm_line', 0.0001, 'way', 'osm_id');
+
+-- 1. Crear la tabla rm_comuna con datos ampliados y cálculo directo de costos
+CREATE TABLE rm_comuna AS
+SELECT 
+    roads.*, 
+    NULL::INTEGER AS source, 
+    NULL::INTEGER AS target, 
+    ST_Length(ST_Transform(roads.way, 32719)) AS cost -- Calcular costos directamente
+FROM planet_osm_line AS roads
+JOIN (
+    SELECT ST_Union(wkb_geometry) AS geom
+    FROM rm_santiago
+    WHERE comuna IN ('Ñuñoa', 'Providencia')
+) AS boundary
+ON ST_Intersects(roads.way, boundary.geom)
+WHERE 
+    highway IN ('footway', 'path', 'pedestrian', 'living_street', 'steps', 'platform', 
+                'residential', 'service', 'unclassified', 'track', 'cycleway', 
+                'tertiary', 'secondary', 'tertiary_link', 'secondary_link', 
+                'primary', 'primary_link', 'construction') 
+    AND way IS NOT NULL;
+
+-- 2. Generar la topología con mayor tolerancia para conectar nodos cercanos
+SELECT pgr_createTopology('rm_comuna', 0.0001, 'way', 'osm_id');
+
+
