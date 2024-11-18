@@ -92,5 +92,5 @@ CREATE TABLE IF NOT EXISTS robos (
     nivel_rv INTEGER,                  -- Nivel de robos violentos
     size INTEGER,                      -- Tamaño
     geom GEOMETRY(MultiPolygon, 4326),  -- Geometría en formato MultiPolygon con SRID 4326 (WGS 84)
-    probabilidad FLOAT,
+    probabilidad FLOAT
 );
