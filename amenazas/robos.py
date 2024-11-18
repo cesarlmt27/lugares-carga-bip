@@ -2,9 +2,20 @@ import requests
 import json
 from datetime import datetime
 import urllib3
+from pyproj import Transformer
 
 # Desactivar las advertencias de SSL
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Transformador de coordenadas de EPSG:3857 a EPSG:4326
+transformer = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True)
+
+# Función para transformar las coordenadas
+def transformar_coordenadas(coordinates):
+    if isinstance(coordinates[0][0], list):  # Si son multipolígonos
+        return [[[transformer.transform(x, y) for x, y in polygon] for polygon in multi] for multi in coordinates]
+    else:  # Si son polígonos simples
+        return [transformer.transform(x, y) for x, y in coordinates]
 
 def get_all_hexagons(base_url, bbox, width, height, srs, x, y, timeout=30):
     params = {
@@ -74,13 +85,13 @@ with open(output_file, 'w') as geojson_file:
         "crs": {
             "type": "name",
             "properties": {
-                "name": "urn:ogc:def:crs:EPSG::3857"
+                "name": "urn:ogc:def:crs:EPSG::4326"  # Cambiado a EPSG:4326
             }
         }
     }, geojson_file)
 
 # Definir el tamaño del paso (step) para recorrer los píxeles en el mapa.
-step_size_x = 50
+step_size_x = 25
 step_size_y = 25
 
 # Función para verificar si un *feature* ya existe en la lista
@@ -99,14 +110,18 @@ with open(output_file, 'r+') as geojson_file:
     for x in range(0, width, step_size_x):
         for y in range(0, height, step_size_y):
             # Detener el proceso si ya se alcanzaron 10 hexágonos únicos
-            if hexagon_count >= 10:
-                print("Se alcanzó el límite de 10 hexágonos. Finalizando el proceso.")
-                break
+            #if hexagon_count >= 10:
+            #    print("Se alcanzó el límite de 10 hexágonos. Finalizando el proceso.")
+            #    break
 
             hexagon_data = get_all_hexagons(base_url, bbox, width, height, srs, x, y)
             
             if hexagon_data and "features" in hexagon_data and len(hexagon_data["features"]) > 0:
                 for feature in hexagon_data["features"]:
+                    # Transformar las coordenadas a EPSG:4326
+                    if feature["geometry"]["type"] == "MultiPolygon":
+                        feature["geometry"]["coordinates"] = transformar_coordenadas(feature["geometry"]["coordinates"])
+
                     # Verificar si el *feature* ya existe antes de agregarlo
                     if not feature_duplicado(feature, data["features"]):
                         data["features"].append(feature)
@@ -116,11 +131,8 @@ with open(output_file, 'r+') as geojson_file:
                         print(f"Feature duplicado omitido para el pixel {x},{y}.")
             else:
                 print(f"No se obtuvieron datos para el pixel {x},{y} o no hay hexágonos.")
-        if hexagon_count >= 10:
-            break
-
-    #data["numberReturned"] = hexagon_count
-    #data["timeStamp"] = datetime.now().isoformat()
+        #if hexagon_count >= 10:
+        #    break
 
     geojson_file.seek(0)
     json.dump(data, geojson_file, indent=4)
