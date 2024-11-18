@@ -51,21 +51,21 @@ robos_df["coordenadas_transformadas"] = robos_df.apply(obtener_y_transformar_coo
 total_robos_registrados = robos_df["properties.robos"].astype(int).sum()
 
 # Calcular la probabilidad de falla como la cantidad de robos totales en la zona dividido por los robos totales registrados
-robos_df["probabilidad_falla"] = robos_df["properties.robos"].astype(int) / total_robos_registrados
+robos_df["probabilidad"] = robos_df["properties.robos"].astype(int) / total_robos_registrados
 
 # Crear un DataFrame de resultados donde se almacenarán las coordenadas de cada vértice junto con el id y la probabilidad de falla
-resultados_df = pd.DataFrame(columns=["id", "longitude", "latitude", "probabilidad_falla"])
+resultados_df = pd.DataFrame(columns=["id", "longitude", "latitude", "probabilidad"])
 
 # Recorrer las filas del DataFrame y agregar cada vértice a 'resultados_df'
 for _, row in robos_df.iterrows():
     id_hexagono = row["id"]
-    probabilidad_falla = row["probabilidad_falla"]
+    probabilidad = row["probabilidad"]
     coordenadas = row["coordenadas_transformadas"]
     
     # Crear un DataFrame temporal para los vértices de cada hexágono
     temp_df = pd.DataFrame(coordenadas, columns=["longitude", "latitude"])
     temp_df["id"] = id_hexagono
-    temp_df["probabilidad_falla"] = probabilidad_falla
+    temp_df["probabilidad"] = probabilidad
     
     # Concatenar con el DataFrame de resultados
     resultados_df = pd.concat([resultados_df, temp_df], ignore_index=True)

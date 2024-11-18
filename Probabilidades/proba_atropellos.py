@@ -3,6 +3,7 @@ from geopy.distance import geodesic
 import psycopg
 from shapely.geometry import mapping
 import json
+import random
 
 # Conexión a la base de datos
 conn = None
@@ -58,15 +59,22 @@ atropellos_gdf['atropellos_cercanos'] = atropellos_gdf['geometry'].apply(
 )
 
 total_atropellos = atropellos_gdf['atropellos_cercanos'].sum()
-if total_atropellos > 0:
-    atropellos_gdf['probabilidad_falla'] = atropellos_gdf['atropellos_cercanos'] / total_atropellos
-else:
-    atropellos_gdf['probabilidad_falla'] = 0
+
+def calcular_probabilidad(atropellos_cercanos, total_atropellos):
+    if atropellos_cercanos > 0 and total_atropellos > 0:
+        probabilidad = round(atropellos_cercanos / total_atropellos, 5)
+        return max(probabilidad, 0.00001)  # Asegurar que no sea menor a 0.00001
+    else:
+        return round(random.uniform(0.00001, 1), 5)
+
+atropellos_gdf['probabilidad'] = atropellos_gdf['atropellos_cercanos'].apply(
+    lambda x: calcular_probabilidad(x, total_atropellos)
+)
 
 # Actualizar la base de datos con las probabilidades calculadas
 update_query = """
 UPDATE atropellos
-SET probabilidad_falla = %s
+SET probabilidad = %s
 WHERE ST_Equals(coordenadas, ST_SetSRID(ST_GeomFromGeoJSON(%s), 4326));
 """
 
@@ -74,7 +82,7 @@ with conn.cursor() as cur:
     for _, row in atropellos_gdf.iterrows():
         geom_json = json.dumps(mapping(row['geometry']))  # Convertir la geometría a formato GeoJSON
         cur.execute(update_query, (
-            row['probabilidad_falla'],  # Probabilidad calculada
+            row['probabilidad'],  # Probabilidad calculada
             geom_json                  # Geometría en formato GeoJSON
         ))
 

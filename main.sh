@@ -11,9 +11,9 @@ python3 nodos.py
 popd
 
 # Ejecutar scripts de infraestructura/aristas
-# pushd infraestructura/aristas
-# python3 aristas.py
-# popd
+ pushd infraestructura/aristas
+ python3 aristas.py
+ popd
 
 # Ejecutar scripts de metadata
 pushd metadata
@@ -41,6 +41,7 @@ popd
 # Ejecutar scripts de probabilidades
 pushd probabilidades
 #python3 proba_robos.py
+python3 proba_atropellos.py
 popd
 
 echo "Finalización de la ejecución de scripts"

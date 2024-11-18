@@ -24,9 +24,9 @@ hexagonos_poligonos = []
 # Agrupar por 'id' para crear un polígono para cada hexágono y asociar la probabilidad
 for _, group in probabilidad_fallas_df.groupby('id'):
     coordenadas_hexagono = group[['longitude', 'latitude']].values.tolist()
-    probabilidad_falla = group['probabilidad_falla'].iloc[0]  # Asumimos que todos los vértices de un hexágono tienen la misma probabilidad
+    probabilidad = group['probabilidad'].iloc[0]  # Asumimos que todos los vértices de un hexágono tienen la misma probabilidad
     hexagono = crear_poligono(coordenadas_hexagono)
-    hexagonos_poligonos.append((hexagono, probabilidad_falla))
+    hexagonos_poligonos.append((hexagono, probabilidad))
 
 # Función para obtener la probabilidad de atropellos para cada nodo
 def obtener_probabilidad_atropellos(nodo, atropellos_df):
@@ -37,13 +37,13 @@ def obtener_probabilidad_atropellos(nodo, atropellos_df):
     return 0.0  # Si no se encuentra el nodo en los atropellos, devolver 0.0
 
 # Obtener la probabilidad de falla para cada nodo
-nodos_df['probabilidad_falla'] = nodos_df.apply(lambda nodo: obtener_probabilidad_falla(nodo, hexagonos_poligonos), axis=1)
+nodos_df['probabilidad'] = nodos_df.apply(lambda nodo: obtener_probabilidad_falla(nodo, hexagonos_poligonos), axis=1)
 
 # Obtener la probabilidad de atropellos para cada nodo
 nodos_df['probabilidad_atropellos'] = nodos_df.apply(lambda nodo: obtener_probabilidad_atropellos(nodo, probabilidad_falla_atropello), axis=1)
 
 # Sumar las probabilidades de falla y atropellos
-nodos_df['probabilidad_total'] = nodos_df['probabilidad_falla'] + nodos_df['probabilidad_atropellos']
+nodos_df['probabilidad_total'] = nodos_df['probabilidad'] + nodos_df['probabilidad_atropellos']
 
 # Seleccionar solo las columnas 'uuid', 'longitud', 'latitud' y 'probabilidad_total'
 nodos_resultado_df = nodos_df[['uuid', 'longitud', 'latitud', 'probabilidad_total']]

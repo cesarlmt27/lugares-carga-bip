@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS cajero_comuna (
     categoria TEXT,
     estado TEXT,
     coordenadas GEOMETRY(Point, 4326),
+    probabilidad FLOAT,
     comuna_intersectada TEXT -- Columna para la comuna intersecada
 );
 
@@ -98,6 +99,7 @@ CREATE TABLE IF NOT EXISTS atropello_comuna (
     leves INTEGER,
     ilesos INTEGER,
     coordenadas GEOMETRY(Point, 4326),
+    probabilidad FLOAT,
     comuna_intersectada TEXT -- Columna para la comuna intersecada
 );
 
