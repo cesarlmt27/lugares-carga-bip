@@ -65,8 +65,7 @@ CREATE TABLE IF NOT EXISTS atropellos (
     menos_grav INT,                    -- Número de heridos menos graves
     leves INT,                         -- Número de heridos leves
     ilesos INT,                        -- Número de ilesos
-    coordenadas GEOMETRY(Point, 4326),  -- Coordenadas geográficas del atropello en formato Point con SRID 4326 (WGS 84)
-    probabilidad FLOAT
+    coordenadas GEOMETRY(Point, 4326)  -- Coordenadas geográficas del atropello en formato Point con SRID 4326 (WGS 84)
 );
 
 -- Crear tabla feriados
@@ -91,6 +90,5 @@ CREATE TABLE IF NOT EXISTS robos (
     nivel_rf INTEGER,                  -- Nivel de robos frustrados
     nivel_rv INTEGER,                  -- Nivel de robos violentos
     size INTEGER,                      -- Tamaño
-    geom GEOMETRY(MultiPolygon, 4326),  -- Geometría en formato MultiPolygon con SRID 4326 (WGS 84)
-    probabilidad FLOAT
+    geom GEOMETRY(MultiPolygon, 4326)  -- Geometría en formato MultiPolygon con SRID 4326 (WGS 84)
 );
