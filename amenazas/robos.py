@@ -1,4 +1,4 @@
-import requests 
+import requests   
 import json
 from datetime import datetime
 import urllib3
@@ -61,8 +61,10 @@ width = 5088
 height = 2954
 srs = "EPSG:3857"
 
-# Inicializar el archivo JSON
-with open("robos.json", 'w') as json_file:
+# Inicializar el archivo GeoJSON
+output_file = "robos.geojson"
+
+with open(output_file, 'w') as geojson_file:
     json.dump({
         "type": "FeatureCollection",
         "features": [],
@@ -75,10 +77,10 @@ with open("robos.json", 'w') as json_file:
                 "name": "urn:ogc:def:crs:EPSG::3857"
             }
         }
-    }, json_file)
+    }, geojson_file)
 
 # Definir el tamaño del paso (step) para recorrer los píxeles en el mapa.
-step_size_x = 25
+step_size_x = 50
 step_size_y = 25
 
 # Función para verificar si un *feature* ya existe en la lista
@@ -90,12 +92,17 @@ def feature_duplicado(nuevo_feature, lista_features):
     return False
 
 # Abrir el archivo en modo lectura y escritura (r+), para agregar cada nuevo hexágono
-with open("robos.json", 'r+') as json_file:
-    data = json.load(json_file)
+with open(output_file, 'r+') as geojson_file:
+    data = json.load(geojson_file)
     hexagon_count = 0
     
     for x in range(0, width, step_size_x):
         for y in range(0, height, step_size_y):
+            # Detener el proceso si ya se alcanzaron 10 hexágonos únicos
+            if hexagon_count >= 10:
+                print("Se alcanzó el límite de 10 hexágonos. Finalizando el proceso.")
+                break
+
             hexagon_data = get_all_hexagons(base_url, bbox, width, height, srs, x, y)
             
             if hexagon_data and "features" in hexagon_data and len(hexagon_data["features"]) > 0:
@@ -104,15 +111,18 @@ with open("robos.json", 'r+') as json_file:
                     if not feature_duplicado(feature, data["features"]):
                         data["features"].append(feature)
                         hexagon_count += 1
-                        print(f"Feature añadido para el pixel {x},{y}.")
+                        print(f"Feature añadido para el pixel {x},{y}. Hexágonos encontrados: {hexagon_count}")
                     else:
                         print(f"Feature duplicado omitido para el pixel {x},{y}.")
             else:
                 print(f"No se obtuvieron datos para el pixel {x},{y} o no hay hexágonos.")
+        if hexagon_count >= 10:
+            break
 
-    data["numberReturned"] = hexagon_count
-    data["timeStamp"] = datetime.now().isoformat()
+    #data["numberReturned"] = hexagon_count
+    #data["timeStamp"] = datetime.now().isoformat()
 
-    json_file.seek(0)
-    json.dump(data, json_file, indent=4)
-    print("Datos guardados en robos.json")
+    geojson_file.seek(0)
+    json.dump(data, geojson_file, indent=4)
+    geojson_file.truncate()
+    print(f"Datos guardados en {output_file}")
