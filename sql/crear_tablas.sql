@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS atropellos (
     leves INT,                         -- Número de heridos leves
     ilesos INT,                        -- Número de ilesos
     coordenadas GEOMETRY(Point, 4326),  -- Coordenadas geográficas del atropello en formato Point con SRID 4326 (WGS 84)
-    probabilidad_falla FLOAT
+    probabilidad FLOAT
 );
 
 -- Crear tabla feriados

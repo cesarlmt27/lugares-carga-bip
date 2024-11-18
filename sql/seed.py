@@ -165,7 +165,7 @@ with open('../amenazas/feriados.json', 'r', encoding='utf-8') as f:
     datos_feriados = json.load(f)
 insertar_feriados(datos_feriados, conn)
 
-with open('../amenazas/robos.json', 'r', encoding='utf-8') as f:
+with open('../amenazas/robos.geojson', 'r', encoding='utf-8') as f:
     datos_robos = json.load(f)
 insertar_robos(datos_robos, conn)
 
