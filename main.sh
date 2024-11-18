@@ -36,13 +36,10 @@ python3 ingresar_saldo.py
 python3 seed.py
 python3 ejecutar_sql.py post_seed.sql
 python3 ruta.py
-popd
 
-# Ejecutar scripts de probabilidades
-# pushd probabilidades
-# python3 proba_robos.py
-# python3 proba_atropellos.py
-# popd
+python3 ejecutar_sql.py probabilidades/proba_atropellos.sql
+python3 ejecutar_sql.py probabilidades/proba_cajeros.sql
+popd
 
 echo "Finalización de la ejecución de scripts"
 
