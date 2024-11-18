@@ -19,6 +19,7 @@ services:
       - './metadata:/app/metadata'
       - './sitio_web:/app/sitio_web'
       - './sql:/app/sql'
+      - './probabilidades:/app/probabilidades'  # Agregar la carpeta probabilidades
     restart: unless-stopped
     environment:
       PGPASSWORD: kj2aBv6f33cZ

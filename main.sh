@@ -38,6 +38,11 @@ python3 ejecutar_sql.py post_seed.sql
 python3 ruta.py
 popd
 
+# Ejecutar scripts de probabilidades
+pushd probabilidades
+#python3 proba_robos.py
+popd
+
 echo "Finalización de la ejecución de scripts"
 
 # Ejecutar la API
