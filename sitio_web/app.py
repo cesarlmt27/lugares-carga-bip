@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import psycopg
 from datetime import date
 
 app = Flask(__name__)
+CORS(app)
 
 def get_db_connection():
     conn = psycopg.connect("dbname=postgres user=postgres password=kj2aBv6f33cZ host=db port=5432")
@@ -28,7 +30,7 @@ def get_feriado_hoy():
         }
         return jsonify(feriado_dict)
     else:
-        return jsonify({'error': 'Not found'}), 404
+        return jsonify({'mensaje': 'No hay feriado hoy.'})
 
 @app.route('/feriado/<fecha>', methods=['GET'])
 def get_feriado_por_fecha(fecha):
