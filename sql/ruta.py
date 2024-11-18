@@ -54,21 +54,84 @@ def find_top_5_clustered_nodes(conn, longitude, latitude):
     FROM top_5_nodes
     ORDER BY distance;
     """
-    with conn.cursor() as cur:
-        cur.execute(query)
-        result = cur.fetchall()
-        return [
-            {"node_id": row[0], "longitude": row[1], "latitude": row[2], "geometry": row[3], "distance": row[4]}
-            for row in result
-        ]
+    try:
+        with conn.cursor() as cur:
+            # Execute the query
+            cur.execute(query)
+            result = cur.fetchall()
+            
+            # Parse and return the results
+            return [
+                {"node_id": row[0], "longitude": row[1], "latitude": row[2], "geometry": row[3], "distance": row[4]}
+                for row in result
+            ]
+    except Exception as e:
+        print(f"Error finding clustered nodes: {e}")
+        return []
 
-def calculate_route_costs(conn, origin_node_id, destination_ids):
+
+def find_closest_nodes(conn, top_5_nodes):
     """
-    Calculate the shortest route costs from the origin node to destination nodes using pgr_dijkstra.
+    Find the closest nodes in `rm_comuna_vertices_pgr` for each node in the top 5 nodes list.
     """
-    destination_array = ", ".join(map(str, destination_ids))
+    # Construct the VALUES clause dynamically
+    values_clause = ", ".join(
+        f"({node['node_id']}, ST_SetSRID(ST_MakePoint({node['longitude']}, {node['latitude']}), 4326))"
+        for node in top_5_nodes
+    )
+    
     query = f"""
-    WITH destinations AS (
+    WITH input_nodes (node_id, geom) AS (
+        VALUES {values_clause}
+    )
+    SELECT DISTINCT ON (nodes.node_id) 
+        nodes.node_id AS input_node_id,
+        rcvp.id AS closest_node_id,
+        ST_Distance(rcvp.the_geom, nodes.geom) AS distance
+    FROM input_nodes AS nodes
+    JOIN rm_comuna_vertices_pgr AS rcvp
+    ON ST_DWithin(rcvp.the_geom, nodes.geom, 1000)
+    ORDER BY nodes.node_id, distance;
+    """
+    
+    try:
+        with conn.cursor() as cur:
+            # Execute the query
+            cur.execute(query)
+            result = cur.fetchall()
+
+            # Return the parsed results
+            return [
+                {"input_node_id": row[0], "closest_node_id": row[1], "distance": row[2]}
+                for row in result
+            ]
+    except Exception as e:
+        print(f"Error finding closest nodes: {e}")
+        return []
+
+
+def calculate_route_costs_using_coordinates(conn, nearest_longitude, nearest_latitude, closest_nodes):
+    """
+    Calculate the shortest route costs from the nearest coordinates to the destination nodes using pgr_dijkstra.
+    """
+    # Extract destination IDs from the closest nodes
+    destination_ids = [node["closest_node_id"] for node in closest_nodes]
+    
+    if not destination_ids:
+        print("No destination nodes provided.")
+        return []
+
+    # Construct destination array for the query
+    destination_array = ", ".join(map(str, destination_ids))
+    
+    query = f"""
+    WITH origin_node AS (
+        SELECT id AS node_id
+        FROM rm_comuna_vertices_pgr
+        ORDER BY ST_Distance(the_geom, ST_SetSRID(ST_MakePoint({nearest_longitude}, {nearest_latitude}), 4326))
+        LIMIT 1
+    ),
+    destinations AS (
         SELECT UNNEST(ARRAY[{destination_array}]) AS dest_id
     ),
     routes AS (
@@ -80,7 +143,7 @@ def calculate_route_costs(conn, origin_node_id, destination_ids):
             SELECT * 
             FROM pgr_dijkstra(
                 'SELECT osm_id AS id, source, target, cost FROM rm_comuna',
-                {origin_node_id},
+                (SELECT node_id FROM origin_node),
                 d.dest_id,
                 false
             )
@@ -91,10 +154,19 @@ def calculate_route_costs(conn, origin_node_id, destination_ids):
     FROM routes
     ORDER BY total_cost ASC;
     """
-    with conn.cursor() as cur:
-        cur.execute(query)
-        result = cur.fetchall()
-        return [{"closest_node_id": row[0], "total_cost": row[1]} for row in result]
+    
+    try:
+        with conn.cursor() as cur:
+            # Execute the query
+            cur.execute(query)
+            result = cur.fetchall()
+
+            # Parse and return the results
+            return [{"closest_node_id": row[0], "total_cost": row[1]} for row in result]
+    except Exception as e:
+        print(f"Error calculating route costs: {e}")
+        return []
+
 
 def insert_route(conn, source_node_id, target_node_id):
     """
@@ -125,35 +197,37 @@ def insert_route(conn, source_node_id, target_node_id):
         JOIN routes r ON rm.osm_id = r.osm_id
     ),
     full_route AS (
-        SELECT ST_Union(geometry) AS geometry
+        SELECT 
+            ST_LineMerge(ST_Union(geometry))::GEOMETRY(LineString, 4326) AS geometry
         FROM route_geometry
     )
     INSERT INTO ruta (source_id, target_id, geometry)
     SELECT {source_node_id}, {target_node_id}, geometry
-    FROM full_route;
+    FROM full_route
+    WHERE geometry IS NOT NULL; -- Ensure geometry is valid
     """
-    with conn.cursor() as cur:
-        cur.execute(query)
-        print(f"Route inserted successfully between {source_node_id} and {target_node_id}.")
+    try:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            print(f"Route inserted successfully between {source_node_id} and {target_node_id}.")
+    except Exception as e:
+        print(f"Error inserting route: {e}")
 
-# Main Execution Flow
+
+# Main execution flow
 input_longitude, input_latitude = -70.6012037, -33.4433545
 
 nearest_node = find_nearest_node(conn, input_longitude, input_latitude)
 if nearest_node:
-    print(f"Nearest Node: {nearest_node}")
     top_5_nodes = find_top_5_clustered_nodes(conn, nearest_node["longitude"], nearest_node["latitude"])
-    print(f"Top 5 Nodes: {top_5_nodes}")
-    destination_ids = [node["node_id"] for node in top_5_nodes]
-    route_costs = calculate_route_costs(conn, nearest_node["node_id"], destination_ids)
+    closest_nodes = find_closest_nodes(conn, top_5_nodes)
+    route_costs = calculate_route_costs_using_coordinates(conn, nearest_node["longitude"], nearest_node["latitude"], closest_nodes)
     if route_costs:
-        print(f"Route Costs: {route_costs}")
         target_node = route_costs[0]
         insert_route(conn, nearest_node["node_id"], target_node["closest_node_id"])
-else:
-    print("No nearest node found.")
 
-# Commit changes and close connection
+
+# Cerrar la conexión
 conn.commit()
 conn.close()
 
