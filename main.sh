@@ -8,7 +8,7 @@ echo "Inicio de la ejecución de scripts"
 pushd infraestructura/nodos
 python3 datosgob.py
 python3 nodos.py
-# popd
+popd
 
 # Ejecutar scripts de infraestructura/aristas
 # pushd infraestructura/aristas
