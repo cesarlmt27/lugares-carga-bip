@@ -79,7 +79,7 @@ def create_shortest_path_table(conn, start_node, end_node):
     Create the shortest path table using pgr_dijkstra.
     """
     query = """
-    CREATE TABLE IF NOT EXISTS shortest_path AS
+    CREATE TABLE IF NOT EXISTS meta_ruta AS
     SELECT roads.*
     FROM rm_line AS roads
     JOIN pgr_dijkstra(
@@ -90,7 +90,7 @@ def create_shortest_path_table(conn, start_node, end_node):
     with conn.cursor() as cur:
         cur.execute(query, (start_node, end_node))
         conn.commit()
-        print("Shortest path table created.")
+        print("meta_ruta table created.")
 
 
 def main():

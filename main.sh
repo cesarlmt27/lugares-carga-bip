@@ -39,6 +39,8 @@ python3 ruta.py
 
 python3 ejecutar_sql.py probabilidades/proba_atropellos.sql
 python3 ejecutar_sql.py probabilidades/proba_cajeros.sql
+python3 ejecutar_sql.py probabilidades/proba_feriados.sql
+python3 meta.py
 popd
 
 echo "Finalización de la ejecución de scripts"
