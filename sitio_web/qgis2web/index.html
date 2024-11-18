@@ -11,8 +11,6 @@
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/MarkerCluster.css">
-        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         html, body, #map {
@@ -39,11 +37,11 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-measure.js"></script>
-        <script src="js/leaflet.markercluster.js"></script>
         <script src="data/rm_santiago_1.js"></script>
-        <script src="data/atropellos_2.js"></script>
-        <script src="data/cajeros_3.js"></script>
-        <script src="data/nodos_4.js"></script>
+        <script src="data/Robos_2.js"></script>
+        <script src="data/Atropellos_3.js"></script>
+        <script src="data/Cajeros_4.js"></script>
+        <script src="data/Lugaresdecarga_5.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -257,7 +255,74 @@
         });
         bounds_group.addLayer(layer_rm_santiago_1);
         map.addLayer(layer_rm_santiago_1);
-        function pop_atropellos_2(feature, layer) {
+        function pop_Robos_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">dmcs</th>\
+                        <td>' + (feature.properties['dmcs'] !== null ? autolinker.link(feature.properties['dmcs'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">robos</th>\
+                        <td>' + (feature.properties['robos'] !== null ? autolinker.link(feature.properties['robos'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">robos_f</th>\
+                        <td>' + (feature.properties['robos_f'] !== null ? autolinker.link(feature.properties['robos_f'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">robos_v</th>\
+                        <td>' + (feature.properties['robos_v'] !== null ? autolinker.link(feature.properties['robos_v'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Robos_2_0() {
+            return {
+                pane: 'pane_Robos_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,181,69,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Robos_2');
+        map.getPane('pane_Robos_2').style.zIndex = 402;
+        map.getPane('pane_Robos_2').style['mix-blend-mode'] = 'normal';
+        var layer_Robos_2 = new L.geoJson(json_Robos_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Robos_2',
+            layerName: 'layer_Robos_2',
+            pane: 'pane_Robos_2',
+            onEachFeature: pop_Robos_2,
+            style: style_Robos_2_0,
+        });
+        bounds_group.addLayer(layer_Robos_2);
+        map.addLayer(layer_Robos_2);
+        function pop_Atropellos_3(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -296,14 +361,6 @@
                         <td>' + (feature.properties['intersecci'] !== null ? autolinker.link(feature.properties['intersecci'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">ruta</th>\
-                        <td>' + (feature.properties['ruta'] !== null ? autolinker.link(feature.properties['ruta'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">ubicacion_1</th>\
-                        <td>' + (feature.properties['ubicacion_1'] !== null ? autolinker.link(feature.properties['ubicacion_1'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
                         <th scope="row">siniestros</th>\
                         <td>' + (feature.properties['siniestros'] !== null ? autolinker.link(feature.properties['siniestros'].toLocaleString()) : '') + '</td>\
                     </tr>\
@@ -327,6 +384,9 @@
                         <th scope="row">ilesos</th>\
                         <td>' + (feature.properties['ilesos'] !== null ? autolinker.link(feature.properties['ilesos'].toLocaleString()) : '') + '</td>\
                     </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>probabilidad</strong><br />' + (feature.properties['probabilidad'] !== null ? autolinker.link(feature.properties['probabilidad'].toLocaleString()) : '') + '</td>\
+                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -335,9 +395,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_atropellos_2_0() {
+        function style_Atropellos_3_0() {
             return {
-                pane: 'pane_atropellos_2',
+                pane: 'pane_Atropellos_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -351,31 +411,27 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_atropellos_2');
-        map.getPane('pane_atropellos_2').style.zIndex = 402;
-        map.getPane('pane_atropellos_2').style['mix-blend-mode'] = 'normal';
-        var layer_atropellos_2 = new L.geoJson(json_atropellos_2, {
+        map.createPane('pane_Atropellos_3');
+        map.getPane('pane_Atropellos_3').style.zIndex = 403;
+        map.getPane('pane_Atropellos_3').style['mix-blend-mode'] = 'normal';
+        var layer_Atropellos_3 = new L.geoJson(json_Atropellos_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_atropellos_2',
-            layerName: 'layer_atropellos_2',
-            pane: 'pane_atropellos_2',
-            onEachFeature: pop_atropellos_2,
+            dataVar: 'json_Atropellos_3',
+            layerName: 'layer_Atropellos_3',
+            pane: 'pane_Atropellos_3',
+            onEachFeature: pop_Atropellos_3,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_atropellos_2_0(feature));
+                return L.circleMarker(latlng, style_Atropellos_3_0(feature));
             },
         });
-        var cluster_atropellos_2 = new L.MarkerClusterGroup({showCoverageOnHover: false,
-            spiderfyDistanceMultiplier: 2});
-        cluster_atropellos_2.addLayer(layer_atropellos_2);
-
-        bounds_group.addLayer(layer_atropellos_2);
-        cluster_atropellos_2.addTo(map);
-        function pop_cajeros_3(feature, layer) {
+        bounds_group.addLayer(layer_Atropellos_3);
+        map.addLayer(layer_Atropellos_3);
+        function pop_Cajeros_4(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -402,12 +458,12 @@
                         <td>' + (feature.properties['comuna'] !== null ? autolinker.link(feature.properties['comuna'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">ciudad</th>\
-                        <td>' + (feature.properties['ciudad'] !== null ? autolinker.link(feature.properties['ciudad'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">estado</th>\
+                        <td>' + (feature.properties['estado'] !== null ? autolinker.link(feature.properties['estado'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">estado</th>\
-                        <td class="visible-with-data" id="estado">' + (feature.properties['estado'] !== null ? autolinker.link(feature.properties['estado'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">probabilidad</th>\
+                        <td>' + (feature.properties['probabilidad'] !== null ? autolinker.link(feature.properties['probabilidad'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -417,9 +473,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_cajeros_3_0() {
+        function style_Cajeros_4_0() {
             return {
-                pane: 'pane_cajeros_3',
+                pane: 'pane_Cajeros_4',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -429,31 +485,31 @@
                 weight: 1,
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(190,178,151,1.0)',
+                fillColor: 'rgba(213,180,60,1.0)',
                 interactive: true,
             }
         }
-        map.createPane('pane_cajeros_3');
-        map.getPane('pane_cajeros_3').style.zIndex = 403;
-        map.getPane('pane_cajeros_3').style['mix-blend-mode'] = 'normal';
-        var layer_cajeros_3 = new L.geoJson(json_cajeros_3, {
+        map.createPane('pane_Cajeros_4');
+        map.getPane('pane_Cajeros_4').style.zIndex = 404;
+        map.getPane('pane_Cajeros_4').style['mix-blend-mode'] = 'normal';
+        var layer_Cajeros_4 = new L.geoJson(json_Cajeros_4, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_cajeros_3',
-            layerName: 'layer_cajeros_3',
-            pane: 'pane_cajeros_3',
-            onEachFeature: pop_cajeros_3,
+            dataVar: 'json_Cajeros_4',
+            layerName: 'layer_Cajeros_4',
+            pane: 'pane_Cajeros_4',
+            onEachFeature: pop_Cajeros_4,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_cajeros_3_0(feature));
+                return L.circleMarker(latlng, style_Cajeros_4_0(feature));
             },
         });
-        bounds_group.addLayer(layer_cajeros_3);
-        map.addLayer(layer_cajeros_3);
-        function pop_nodos_4(feature, layer) {
+        bounds_group.addLayer(layer_Cajeros_4);
+        map.addLayer(layer_Cajeros_4);
+        function pop_Lugaresdecarga_5(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -499,10 +555,10 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_nodos_4_0() {
+        function style_Lugaresdecarga_5_0() {
             return {
-                pane: 'pane_nodos_4',
-                radius: 4.0,
+                pane: 'pane_Lugaresdecarga_5',
+                radius: 4.8,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -515,33 +571,34 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_nodos_4');
-        map.getPane('pane_nodos_4').style.zIndex = 404;
-        map.getPane('pane_nodos_4').style['mix-blend-mode'] = 'normal';
-        var layer_nodos_4 = new L.geoJson(json_nodos_4, {
+        map.createPane('pane_Lugaresdecarga_5');
+        map.getPane('pane_Lugaresdecarga_5').style.zIndex = 405;
+        map.getPane('pane_Lugaresdecarga_5').style['mix-blend-mode'] = 'normal';
+        var layer_Lugaresdecarga_5 = new L.geoJson(json_Lugaresdecarga_5, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_nodos_4',
-            layerName: 'layer_nodos_4',
-            pane: 'pane_nodos_4',
-            onEachFeature: pop_nodos_4,
+            dataVar: 'json_Lugaresdecarga_5',
+            layerName: 'layer_Lugaresdecarga_5',
+            pane: 'pane_Lugaresdecarga_5',
+            onEachFeature: pop_Lugaresdecarga_5,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_nodos_4_0(feature));
+                return L.circleMarker(latlng, style_Lugaresdecarga_5_0(feature));
             },
         });
-        bounds_group.addLayer(layer_nodos_4);
-        map.addLayer(layer_nodos_4);
+        bounds_group.addLayer(layer_Lugaresdecarga_5);
+        map.addLayer(layer_Lugaresdecarga_5);
         var overlaysTree = [
         {label: '<b>Infraestructura</b>', selectAllCheckbox: true, children: [
-            {label: '<img src="legend/nodos_4.png" /> nodos', layer: layer_nodos_4},]},
+            {label: '<img src="legend/Lugaresdecarga_5.png" /> Lugares de carga', layer: layer_Lugaresdecarga_5},]},
         {label: '<b>Metadata</b>', selectAllCheckbox: true, children: [
-            {label: '<img src="legend/cajeros_3.png" /> cajeros', layer: layer_cajeros_3},]},
+            {label: '<img src="legend/Cajeros_4.png" /> Cajeros', layer: layer_Cajeros_4},]},
         {label: '<b>Amenazas</b>', selectAllCheckbox: true, children: [
-            {label: '<img src="legend/atropellos_2.png" /> atropellos', layer: cluster_atropellos_2},]},
+            {label: '<img src="legend/Atropellos_3.png" /> Atropellos', layer: layer_Atropellos_3},
+            {label: '<img src="legend/Robos_2.png" /> Robos', layer: layer_Robos_2},]},
             {label: '<img src="legend/rm_santiago_1.png" /> rm_santiago', layer: layer_rm_santiago_1},
             {label: "OpenStreetMap", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },]
         var lay = L.control.layers.tree(null, overlaysTree,{
