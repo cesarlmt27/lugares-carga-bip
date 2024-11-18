@@ -35,6 +35,7 @@ python3 ejecutar_sql.py crear_tablas.sql
 python3 ingresar_saldo.py
 python3 seed.py
 python3 ejecutar_sql.py post_seed.sql
+python3 ruta.py
 popd
 
 echo "Finalización de la ejecución de scripts"
