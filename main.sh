@@ -39,10 +39,10 @@ python3 ruta.py
 popd
 
 # Ejecutar scripts de probabilidades
-pushd probabilidades
-#python3 proba_robos.py
-python3 proba_atropellos.py
-popd
+# pushd probabilidades
+# python3 proba_robos.py
+# python3 proba_atropellos.py
+# popd
 
 echo "Finalización de la ejecución de scripts"
 
